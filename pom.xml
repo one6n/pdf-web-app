@@ -51,6 +51,22 @@
 	  		<artifactId>pdf-utils</artifactId>
 	  		<version>1.0.3</version>
 		</dependency>
+		<!--  Bootstrap 4.6 -->
+		<dependency>
+    		<groupId>org.webjars</groupId>
+    		<artifactId>bootstrap</artifactId>
+    		<version>4.6.0-1</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>jquery</artifactId>
+		    <version>3.6.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>popper.js</artifactId>
+		    <version>2.9.2</version>
+		</dependency>
 		
 	</dependencies>
 

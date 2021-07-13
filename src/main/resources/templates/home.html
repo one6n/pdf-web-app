@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script th:replace="fragments.html :: jquery_cdn"></script>
+<link th:replace="fragments.html :: bootstrap_css"/>
+<link th:replace="fragments.html :: bootstrap_icons"/>
+<title th:text="${title}"></title>
+</head>
+<body>
+
+	<div class="container-fluid">
+		<div class="row justify-content-center bg-primary">
+			<div class="col-md-4 text-center">
+				<h1 class="text-white font-italic"> NAVBAR </h1>
+			</div>
+		</div>
+		
+		<div class="container mt-3">
+			<div class="row justify-content-center">
+				<h1 class="display-1">PDF Web Utils</h1>
+			</div>
+			<div class="row justify-content-center mt-5">
+				<span><img src="PDF_file_icon.svg" alt="Error Image" /></span>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="fragments.html :: bootstrap_script"></div>
+
+<script>
+
+</script>
+
+</body>
+</html>
