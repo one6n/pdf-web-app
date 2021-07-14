@@ -18,7 +18,8 @@ public class WebController {
 
 	@GetMapping
 	public String getHome(Model model) {
+		log.debug("Enter HomePage");
 		model.addAttribute("title", title);
-		return "home";
+		return HOME_PATH;
 	}
 }

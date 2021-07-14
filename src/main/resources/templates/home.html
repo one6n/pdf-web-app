@@ -10,19 +10,32 @@
 </head>
 <body>
 
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  	<div class="collapse navbar-collapse">
+	    	<a class="navbar-brand mr-4 align-items-center" th:href="@{/}">
+				<i class="bi bi-file-earmark-pdf text-danger" style="font-size:32px;"></i>
+				<span>PDF</span>
+	    	</a>
+	    	<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+	      		<li class="nav-item disable">
+	        		<a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+	      		</li>
+	      		<li class="nav-item disable">
+	        		<a class="nav-link" href="#">Link</a>
+	      		</li>
+	    	</ul>
+	    </div>
+	</nav>
+
 	<div class="container-fluid">
-		<div class="row justify-content-center bg-primary">
-			<div class="col-md-4 text-center">
-				<h1 class="text-white font-italic"> NAVBAR </h1>
-			</div>
-		</div>
+		<h1 class="text-white font-italic"> NAVBAR </h1>
 		
 		<div class="container mt-3">
 			<div class="row justify-content-center">
-				<h1 class="display-1">PDF Web Utils</h1>
+				<h1 class="display-3">PDF Web Utils</h1>
 			</div>
 			<div class="row justify-content-center mt-5">
-				<span><img src="PDF_file_icon.svg" alt="Error Image" /></span>
+				<span><img src="PDF_file_icon.svg" alt="Error Image" width="240" height="240"/></span>
 			</div>
 		</div>
 	</div>
