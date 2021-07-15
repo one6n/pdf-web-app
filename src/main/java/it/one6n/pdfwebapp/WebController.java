@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,15 +14,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WebController {
 
-	private final static String HOME_PATH = "home";
+	public static final String HOME_PATH = "/";
+	public static final String SPLIT_PATH = "/split";
+	public static final String EDIT_SPLIT_PATH = "/editSplit";
+
+	public final static String HOME_PAGE = "home";
+	public static final String SPLIT_PAGE = "split";
+	public static final String EDIT_SPLIT_PAGE = "editSplit";
 
 	@Value("${spring.application.name}")
 	private String title;
 
-	@GetMapping
-	public String getHome(Model model) {
+	@GetMapping(HOME_PATH)
+	public String getHomePage(Model model) {
 		log.debug("Enter HomePage");
 		model.addAttribute("title", title);
-		return HOME_PATH;
+		return HOME_PAGE;
+	}
+
+	@GetMapping(SPLIT_PATH)
+	public String getSplitPage(Model model) {
+		log.debug("Enter SplitPage");
+		model.addAttribute("title", title);
+		return SPLIT_PAGE;
+	}
+
+	@PostMapping(EDIT_SPLIT_PATH)
+	public String getEditSplitPage(@RequestParam("file") MultipartFile pdf, Model model) {
+		log.debug("pdf={}, size={}", pdf.getOriginalFilename(), pdf.getSize());
+		model.addAttribute("title", title);
+		return EDIT_SPLIT_PAGE;
 	}
 }

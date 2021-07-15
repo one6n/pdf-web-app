@@ -9,6 +9,24 @@
 </head>
 
 <body>
+
+	<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+	  	<div class="collapse navbar-collapse">
+	    	<a class="navbar-brand mr-4 align-items-center" th:href="@{/}">
+				<i class="bi bi-file-earmark-pdf text-danger" style="font-size:32px;"></i>
+				<span>PDF</span>
+	    	</a>
+	    	<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+	      		<li class="nav-item disable">
+	        		<a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+	      		</li>
+	      		<li class="nav-item disable">
+	        		<a class="nav-link" th:href="@{/split}">Split</a>
+	      		</li>
+	    	</ul>
+	    </div>
+	</nav>
+
 <div th:fragment="bootstrap_script">
 	<!--  <script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script> necessary only if you don't use the jquery cdn above-->
 	<script th:src="@{/webjars/popper.js/2.9.2/umd/popper.min.js}"></script>

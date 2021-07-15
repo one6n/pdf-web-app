@@ -11,22 +11,14 @@
 <body>
 
 	<nav th:replace="fragments.html :: navbar" />
-
-	<div class="container-fluid">
-		<h1 class="text-white font-italic"> NAVBAR </h1>
-		
-		<div class="container mt-3">
-			<div class="row justify-content-center">
-				<h1 class="display-3">PDF Web Utils</h1>
-			</div>
-			<div class="row justify-content-center mt-5">
-				<span><img src="PDF_file_icon.svg" alt="Error Image" width="240" height="240"/></span>
-			</div>
+	
+	<div th:replace="fragments.html :: bootstrap_script"></div>
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<a href="/" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
 		</div>
 	</div>
-
-	<div th:replace="fragments.html :: bootstrap_script"></div>
-
+	
 <script>
 
 </script>
