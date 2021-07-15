@@ -1,15 +1,15 @@
 package it.one6n.pdfwebapp;
 
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@RestController
 @RequestMapping("/rest")
-public class RestController {
+public class RestWebController {
 
 	public static final String SPLIT_FILE_PATH = "/splitFile";
 
