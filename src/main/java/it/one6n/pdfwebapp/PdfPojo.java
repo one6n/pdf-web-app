@@ -21,6 +21,7 @@ public class PdfPojo {
 	@GeneratedValue
 	private Long id;
 	private String filename;
+	private int numberOfPages;
 	private Date insertDate;
 	private Blob data;
 }

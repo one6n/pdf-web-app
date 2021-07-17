@@ -48,10 +48,13 @@ public class WebController {
 	}
 
 	@PostMapping(EDIT_SPLIT_PATH)
-	public String getEditSplitPage(@RequestParam("file") MultipartFile pdf, Model model) {
-		log.info("pdf={}, size={}", pdf.getOriginalFilename(), pdf.getSize());
-		getPdfService().savePdf(pdf);
+	public String getEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
+		log.info("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
+		PdfPojo pdf = getPdfService().savePdf(inputFile);
 		model.addAttribute("title", title);
+		model.addAttribute("id", pdf.getId());
+		model.addAttribute("filename", pdf.getFilename());
+		model.addAttribute("numPages", pdf.getNumberOfPages());
 		return EDIT_SPLIT_PAGE;
 	}
 }
