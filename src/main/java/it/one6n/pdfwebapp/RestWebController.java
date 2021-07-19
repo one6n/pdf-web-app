@@ -1,5 +1,7 @@
 package it.one6n.pdfwebapp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +32,22 @@ public class RestWebController {
 			try {
 				Long id = Long.parseLong(input.get("id"));
 				int splitIndex = Integer.parseInt(input.get("splitIndex"));
-				PdfPojo pdf = getPdfService().findPdfById(id);
-				if (pdf != null) {
-					// result.setData(pdf);
-					if (pdf.getNumberOfPages() > splitIndex) {
-						log.debug("File loaded: filename={}, size={}", pdf.getFilename(), pdf.getData().length());
-
+				PdfPojo originalPdf = getPdfService().findPdfById(id);
+				if (originalPdf != null)
+					if (originalPdf.getNumberOfPages() > splitIndex) {
+						log.debug("File loaded: filename={}, size={}", originalPdf.getFilename(),
+								originalPdf.getData().length());
+						List<Long> ids = new ArrayList<>();
+						List<PdfPojo> splittedPdf = getPdfService().splitDocuments(originalPdf, splitIndex);
+						for (PdfPojo pdf : splittedPdf) {
+							PdfPojo saved = getPdfService().savePdf(pdf);
+							log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(), saved.getId(),
+									saved.getNumberOfPages());
+							ids.add(saved.getId());
+						}
+						getPdfService().deletePdfById(originalPdf.getId());
+						result.setData(ids);
 					}
-				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

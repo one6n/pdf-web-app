@@ -51,6 +51,7 @@ public class WebController {
 	public String getEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
 		log.info("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
 		PdfPojo pdf = getPdfService().savePdf(inputFile);
+		log.debug("Saved: id={}, filename={}", pdf.getId(), pdf.getFilename());
 		model.addAttribute("title", title);
 		model.addAttribute("id", pdf.getId());
 		model.addAttribute("filename", pdf.getFilename());
