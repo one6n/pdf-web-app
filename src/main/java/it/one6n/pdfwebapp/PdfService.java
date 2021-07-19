@@ -74,13 +74,13 @@ public class PdfService {
 		if (documents != null && originalFilename != null) {
 			splittedPdf = new ArrayList<>();
 			int counter = 1;
-			for (PDDocument splittedDocument : documents) {
+			for (PDDocument doc : documents) {
 				PdfPojo pojo = new PdfPojo();
 				pojo.setFilename(originalFilename.substring(0, originalFilename.length() - 4) + "_" + counter + ".pdf");
-				pojo.setNumberOfPages(splittedDocument.getNumberOfPages());
+				pojo.setNumberOfPages(doc.getNumberOfPages());
 				pojo.setInsertDate(new Date());
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				splittedDocument.save(bos);
+				doc.save(bos);
 				pojo.setData(new SerialBlob(bos.toByteArray()));
 				splittedPdf.add(pojo);
 				++counter;
@@ -94,9 +94,14 @@ public class PdfService {
 		if (pdf != null) {
 			splittedPdf = new ArrayList<>();
 			byte[] barr = deserialize(pdf.getData());
-			PDDocument docOriginal = PDDocument.load(barr);
-			List<PDDocument> splittedDocuments = PdfUtils.splitDocument(docOriginal, delimiter);
-			splittedPdf = buildSplittedPdfPojo(splittedDocuments, pdf.getFilename());
+			List<PDDocument> splittedDocuments = null;
+			try (PDDocument docOriginal = PDDocument.load(barr)) {
+				splittedDocuments = PdfUtils.splitDocument(docOriginal, delimiter);
+				splittedPdf = buildSplittedPdfPojo(splittedDocuments, pdf.getFilename());
+			} finally {
+				for (PDDocument doc : splittedDocuments)
+					doc.close();
+			}
 		}
 		return splittedPdf;
 	}

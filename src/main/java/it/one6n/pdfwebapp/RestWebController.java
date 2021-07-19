@@ -38,8 +38,8 @@ public class RestWebController {
 						log.debug("File loaded: filename={}, size={}", originalPdf.getFilename(),
 								originalPdf.getData().length());
 						List<Long> ids = new ArrayList<>();
-						List<PdfPojo> splittedPdf = getPdfService().splitDocuments(originalPdf, splitIndex);
-						for (PdfPojo pdf : splittedPdf) {
+						List<PdfPojo> splittedDocuments = getPdfService().splitDocuments(originalPdf, splitIndex);
+						for (PdfPojo pdf : splittedDocuments) {
 							PdfPojo saved = getPdfService().savePdf(pdf);
 							log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(), saved.getId(),
 									saved.getNumberOfPages());
