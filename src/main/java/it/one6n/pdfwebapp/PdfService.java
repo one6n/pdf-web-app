@@ -68,28 +68,29 @@ public class PdfService {
 		return pdf;
 	}
 
-	public List<PdfPojo> buildSplittedPdfPojo(List<PDDocument> documents, String originalFilename)
+	public List<PdfPojo> buildPdfPojoFromDocuments(List<PDDocument> documents, String baseFilename)
 			throws IOException, SerialException, SQLException {
-		List<PdfPojo> splittedPdf = null;
-		if (documents != null && originalFilename != null) {
-			splittedPdf = new ArrayList<>();
+		List<PdfPojo> pojos = null;
+		if (documents != null && baseFilename != null) {
+			pojos = new ArrayList<>();
 			int counter = 1;
-			for (PDDocument doc : documents) {
-				PdfPojo pojo = new PdfPojo();
-				pojo.setFilename(originalFilename.substring(0, originalFilename.length() - 4) + "_" + counter + ".pdf");
-				pojo.setNumberOfPages(doc.getNumberOfPages());
-				pojo.setInsertDate(new Date());
-				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				doc.save(bos);
-				pojo.setData(new SerialBlob(bos.toByteArray()));
-				splittedPdf.add(pojo);
-				++counter;
-			}
+			for (PDDocument doc : documents)
+				try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+					PdfPojo pojo = new PdfPojo();
+					String filename = baseFilename.substring(0, baseFilename.indexOf(".pdf")) + "_" + counter + ".pdf";
+					pojo.setFilename(filename);
+					pojo.setNumberOfPages(doc.getNumberOfPages());
+					pojo.setInsertDate(new Date());
+					doc.save(bos);
+					pojo.setData(new SerialBlob(bos.toByteArray()));
+					pojos.add(pojo);
+					++counter;
+				}
 		}
-		return splittedPdf;
+		return pojos;
 	}
 
-	public List<PdfPojo> splitDocuments(PdfPojo pdf, int delimiter) throws SQLException, IOException {
+	public List<PdfPojo> splitPdf(PdfPojo pdf, int delimiter) throws SQLException, IOException {
 		List<PdfPojo> splittedPdf = null;
 		if (pdf != null) {
 			splittedPdf = new ArrayList<>();
@@ -97,7 +98,7 @@ public class PdfService {
 			List<PDDocument> splittedDocuments = null;
 			try (PDDocument docOriginal = PDDocument.load(barr)) {
 				splittedDocuments = PdfUtils.splitDocument(docOriginal, delimiter);
-				splittedPdf = buildSplittedPdfPojo(splittedDocuments, pdf.getFilename());
+				splittedPdf = buildPdfPojoFromDocuments(splittedDocuments, pdf.getFilename());
 			} finally {
 				for (PDDocument doc : splittedDocuments)
 					doc.close();

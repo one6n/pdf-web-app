@@ -38,7 +38,7 @@ public class RestWebController {
 						log.debug("File loaded: filename={}, size={}", originalPdf.getFilename(),
 								originalPdf.getData().length());
 						List<Long> ids = new ArrayList<>();
-						List<PdfPojo> splittedDocuments = getPdfService().splitDocuments(originalPdf, splitIndex);
+						List<PdfPojo> splittedDocuments = getPdfService().splitPdf(originalPdf, splitIndex);
 						for (PdfPojo pdf : splittedDocuments) {
 							PdfPojo saved = getPdfService().savePdf(pdf);
 							log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(), saved.getId(),
@@ -51,7 +51,8 @@ public class RestWebController {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-			result.setResult(true);
+			if (result.getData() != null)
+				result.setResult(true);
 		}
 		return result;
 	}
