@@ -14,7 +14,7 @@
 	
 	<div class="container mt-5">
 		<div class="row justify-content-center">
-			<form method="POST" action="/editSplit" class="form-group" enctype="multipart/form-data">
+			<form method="POST" th:action="@{/editSplit}" class="form-group" enctype="multipart/form-data">
 				<div class="form-row align-items-center">
 					<div class="form-group col-md-9">
 				    	<label for="uploadFile">Upload File</label>
@@ -27,7 +27,7 @@
 			</form>
 		</div>
 		<div class="row justify-content-center">
-			<a href="/" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
+			<a th:href="@{/}" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
 		</div>
 	</div>
 	

@@ -12,15 +12,46 @@
 
 	<nav th:replace="fragments.html :: navbar" />
 	
+	<button id="splitBtn">Split</button>
+	
 	<div th:replace="fragments.html :: bootstrap_script"></div>
 	<div class="container mt-5">
 		<div class="row justify-content-center">
-			<a href="/" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
+			<a th:href="@{/}" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
 		</div>
 	</div>
 	
 <script>
+var splitFileRestUrl = "/pdf-web-app/api/rest/splitFile";
 
+function ajaxRequest() {
+	var data = {
+			id: "7",
+			splitIndex: "2",
+	}
+
+	$.ajax({
+	    type: "POST",  
+	    url: splitFileRestUrl,
+	    dataType: "json",
+	    contentType: "application/json",
+	    data: JSON.stringify(data),
+	    success: function(res) {
+		   console.log(res);
+	    },
+	    error: function(response) { 
+	        alert("Error: " + response.status); 
+	    }       
+	});
+};
+
+$(document).ready(function() {
+	var $splitBtn = $("#splitBtn");
+	
+	$splitBtn.click(() => {
+		ajaxRequest();
+	});
+});
 </script>
 
 </body>
