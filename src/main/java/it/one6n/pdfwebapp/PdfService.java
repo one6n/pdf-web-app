@@ -11,12 +11,12 @@ import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 
+import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.one6n.pdfutils.PdfUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +97,7 @@ public class PdfService {
 			byte[] barr = deserialize(pdf.getData());
 			List<PDDocument> splittedDocuments = null;
 			try (PDDocument docOriginal = PDDocument.load(barr)) {
-				splittedDocuments = PdfUtils.splitDocument(docOriginal, delimiter);
+				splittedDocuments = splitDocument(docOriginal, delimiter);
 				splittedPdf = buildPdfPojoFromDocuments(splittedDocuments, pdf.getFilename());
 			} finally {
 				for (PDDocument doc : splittedDocuments)
@@ -125,5 +125,13 @@ public class PdfService {
 			barr = data.getBytes(1, (int) data.length());
 		}
 		return barr;
+	}
+
+	public List<PDDocument> splitDocument(PDDocument document, int index) throws IOException {
+		List<PDDocument> documents = null;
+		Splitter splitter = new Splitter();
+		splitter.setEndPage(index);
+		documents = splitter.split(document);
+		return documents;
 	}
 }
