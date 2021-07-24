@@ -55,6 +55,10 @@ public class PdfService {
 		return getPdfRepo().save(pdf);
 	}
 
+	public List<PdfPojo> findAllOrderByDateDesc() {
+		return getPdfRepo().findAllOrderByInsertDateDesc();
+	}
+
 	public PdfPojo buildPdfPojoFromMultipartFile(MultipartFile file) throws IOException, SerialException, SQLException {
 		PdfPojo pdf = new PdfPojo();
 		byte[] barr = file.getBytes();
