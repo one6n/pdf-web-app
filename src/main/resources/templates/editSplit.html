@@ -66,12 +66,15 @@ $(document).ready(function() {
 	var $splitBtn = $("#splitBtn");
 	var $splitIndex = $("#splitIndex");
 
+	function evaluateResponse(res) {
+		console.log(res);
+	}
+
 	function ajaxRequest() {
 		var data = {
 				id: pdfId,
 				splitIndex: $splitIndex.val(),
 		}
-		console.log(data);
 
 		$.ajax({
 			type: "POST",  
@@ -80,7 +83,7 @@ $(document).ready(function() {
 			contentType: "application/json",
 			data: JSON.stringify(data),
 			success: function(res) {
-			console.log(res);
+			evaluateResponse(res);
 			},
 			error: function(response) { 
 				alert("Error: " + response.status); 
