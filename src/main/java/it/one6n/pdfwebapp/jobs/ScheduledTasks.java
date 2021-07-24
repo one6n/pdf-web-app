@@ -17,13 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ScheduledTasks {
 
-	private String removeOldPdfCron;
+	@Autowired
+	private PdfService pdfService;
 
 	@Value("${jobs.removeoldpdf.maxage}")
 	private long maxAge;
-
-	@Autowired
-	private PdfService pdfService;
 
 	@Scheduled(cron = "${jobs.removeoldpdf.cron}")
 	public void removeOldPdf() {
