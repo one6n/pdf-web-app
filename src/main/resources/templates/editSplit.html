@@ -7,12 +7,49 @@
 <link th:replace="fragments.html :: bootstrap_css"/>
 <link th:replace="fragments.html :: bootstrap_icons"/>
 <title th:text="${title}"></title>
+
+<style>
+	fieldset {
+		display: block;
+		margin-left: 2px;
+		margin-right: 2px;
+		padding-top: 0.35em;
+		padding-bottom: 0.625em;
+		padding-left: 0.75em;
+		padding-right: 0.75em;
+		border: 2px solid #0275d8;
+		border-radius:8px;
+	}
+</style>
 </head>
 <body>
 
 	<nav th:replace="fragments.html :: navbar" />
 	
-	<button id="splitBtn">Split</button>
+	<div class="container mt-5 justify-content-center">
+		<div class="row">
+			<fieldset class="col-md-12 form-inline justify-content-center">
+				<legend class="form-inline font-italic"> PDF Info:</legend>
+					<div class="col-md-3">
+						<h5 th:text="|File: ${filename}|" />
+					</div>
+					<div class="col-md-3">
+						<h5 th:text="|Number Of Pages: ${numPages}|" />
+					</div>
+			</fieldset>
+		</div>
+
+		<div class="row justify-content-center align-items-center mt-5">
+			<div class="col-md-4">
+				<label for="splitIndex">Split at: </label>
+				<input type="text" class="form-control" id="splitIndex" placeholder="Insert page of splitting">
+				<small id="idEmployeelHelp" class="form-text text-muted">The page of splitting must be smaller or equals to pdf length</small>
+			</div>
+			<div class="col-md-2 ml-2">
+				<button id="splitBtn" class="btn btn-outline-primary">Split</button>
+			</div>
+		</div>
+	</div>
 	
 	<div th:replace="fragments.html :: bootstrap_script"></div>
 	<div class="container mt-5">
@@ -22,36 +59,40 @@
 	</div>
 	
 <script>
-var splitFileRestUrl = "/pdf-web-app/api/rest/splitFile";
-
-function ajaxRequest() {
-	var data = {
-			id: "7",
-			splitIndex: "2",
-	}
-
-	$.ajax({
-	    type: "POST",  
-	    url: splitFileRestUrl,
-	    dataType: "json",
-	    contentType: "application/json",
-	    data: JSON.stringify(data),
-	    success: function(res) {
-		   console.log(res);
-	    },
-	    error: function(response) { 
-	        alert("Error: " + response.status); 
-	    }       
-	});
-};
 
 $(document).ready(function() {
+	var splitFileRestUrl = "/pdf-web-app/api/rest/splitFile";
+	var pdfId = [[ ${id} ]];
 	var $splitBtn = $("#splitBtn");
+	var $splitIndex = $("#splitIndex");
+
+	function ajaxRequest() {
+		var data = {
+				id: pdfId,
+				splitIndex: $splitIndex.val(),
+		}
+		console.log(data);
+
+		$.ajax({
+			type: "POST",  
+			url: splitFileRestUrl,
+			dataType: "json",
+			contentType: "application/json",
+			data: JSON.stringify(data),
+			success: function(res) {
+			console.log(res);
+			},
+			error: function(response) { 
+				alert("Error: " + response.status); 
+			}       
+		});
+	};
 	
 	$splitBtn.click(() => {
 		ajaxRequest();
 	});
 });
+
 </script>
 
 </body>
