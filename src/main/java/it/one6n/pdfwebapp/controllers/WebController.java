@@ -1,4 +1,4 @@
-package it.one6n.pdfwebapp;
+package it.one6n.pdfwebapp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import it.one6n.pdfwebapp.PdfPojo;
+import it.one6n.pdfwebapp.PdfService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

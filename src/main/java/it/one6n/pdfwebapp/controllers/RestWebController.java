@@ -1,4 +1,4 @@
-package it.one6n.pdfwebapp;
+package it.one6n.pdfwebapp.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.one6n.pdfwebapp.PdfPojo;
+import it.one6n.pdfwebapp.PdfService;
+import it.one6n.pdfwebapp.RestResult;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
