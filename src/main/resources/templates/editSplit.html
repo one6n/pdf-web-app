@@ -39,6 +39,12 @@
 			</fieldset>
 		</div>
 
+		<div class="row justify-content-center mt-5">
+			<div class="col-md-12">	
+				<div id="errorMsg" class="alert alert-danger" role="alert" style="display: none;"> Something went wrong, please check the data </div>
+			</div>
+		</div>
+
 		<div class="row justify-content-center align-items-center mt-5">
 			<div class="col-md-4">
 				<label for="splitIndex">Split at: </label>
@@ -63,12 +69,25 @@
 $(document).ready(function() {
 	var splitFileRestUrl = "/pdf-web-app/api/rest/splitFile";
 	var pdfId = [[ ${id} ]];
+	var $errorMsg = $("#errorMsg");
 	var $splitBtn = $("#splitBtn");
 	var $splitIndex = $("#splitIndex");
 
+	function showErrorMessage() {
+		$errorMsg.css({"display": ""});
+	};
+
 	function evaluateResponse(res) {
 		console.log(res);
-	}
+		const result = res.result;
+		const data = res.data;
+		if(result) {
+			console.log(result, data);
+		}
+		else {
+			showErrorMessage();
+		}
+	};
 
 	function ajaxRequest() {
 		var data = {
@@ -92,6 +111,7 @@ $(document).ready(function() {
 	};
 	
 	$splitBtn.click(() => {
+		$errorMsg.css({"display": "none"});
 		ajaxRequest();
 	});
 });

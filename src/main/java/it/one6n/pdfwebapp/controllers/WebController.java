@@ -24,10 +24,12 @@ public class WebController {
 	public static final String HOME_PATH = "/";
 	public static final String SPLIT_PATH = "/split";
 	public static final String EDIT_SPLIT_PATH = "/editSplit";
+	public static final String DOWNLOAD_SPLITTED_PATH = "/downloadSplitted";
 
 	public final static String HOME_PAGE = "home";
 	public static final String SPLIT_PAGE = "split";
 	public static final String EDIT_SPLIT_PAGE = "editSplit";
+	private static final String DOWNLOAD_SPLITTED_PAGE = "downloadSplitted";
 
 	@Value("${spring.application.name}")
 	private String title;
@@ -37,21 +39,21 @@ public class WebController {
 
 	@GetMapping(HOME_PATH)
 	public String getHomePage(Model model) {
-		log.info("Enter HomePage");
+		log.debug("Enter HomePage");
 		model.addAttribute("title", title);
 		return HOME_PAGE;
 	}
 
 	@GetMapping(SPLIT_PATH)
 	public String getSplitPage(Model model) {
-		log.info("Enter SplitPage");
+		log.debug("Enter SplitPage");
 		model.addAttribute("title", title);
 		return SPLIT_PAGE;
 	}
 
 	@PostMapping(EDIT_SPLIT_PATH)
 	public String getEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
-		log.info("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
+		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
 		PdfPojo pdf = getPdfService().savePdf(inputFile);
 		log.debug("Saved: id={}, filename={}", pdf.getId(), pdf.getFilename());
 		model.addAttribute("title", title);
@@ -59,5 +61,12 @@ public class WebController {
 		model.addAttribute("filename", pdf.getFilename());
 		model.addAttribute("numPages", pdf.getNumberOfPages());
 		return EDIT_SPLIT_PAGE;
+	}
+
+	@GetMapping(DOWNLOAD_SPLITTED_PATH)
+	public String getDownloadSplittedPage(Model model) {
+		log.debug("Enter DownloadSplittedPage");
+		model.addAttribute("title", title);
+		return DOWNLOAD_SPLITTED_PAGE;
 	}
 }
