@@ -76,13 +76,23 @@ $(document).ready(function() {
 	function showErrorMessage() {
 		$errorMsg.css({"display": ""});
 	};
+	
+	function changeLocation(ids) {
+		console.log(ids);
+		const url = new URL('http://localhost:8080/pdf-web-app/downloadSplit');
+		var params = new URLSearchParams(url.search);
+		var count = 1;
+		ids.map(id => {
+			params.set('id' + count, id);
+		});
+		console.log(params.toString());
+	};
 
 	function evaluateResponse(res) {
-		console.log(res);
 		const result = res.result;
 		const data = res.data;
 		if(result) {
-			console.log(result, data);
+			changeLocation(data);
 		}
 		else {
 			showErrorMessage();
@@ -114,6 +124,15 @@ $(document).ready(function() {
 		$errorMsg.css({"display": "none"});
 		ajaxRequest();
 	});
+	
+	$splitIndex.keypress((event) => {
+		$errorMsg.css({"display": "none"});
+		var keycode = (event.keyCode ? event.keyCode : event.which)
+		if(keycode == 13) {
+			ajaxRequest();
+		}
+	});
+	
 });
 
 </script>

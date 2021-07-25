@@ -1,5 +1,10 @@
 package it.one6n.pdfwebapp.controllers;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -64,9 +69,12 @@ public class WebController {
 	}
 
 	@GetMapping(DOWNLOAD_SPLITTED_PATH)
-	public String getDownloadSplittedPage(Model model) {
+	public String getDownloadSplittedPage(Model model, HttpServletRequest request) {
 		log.debug("Enter DownloadSplittedPage");
 		model.addAttribute("title", title);
+		Map<String, String[]> parameters = request.getParameterMap();
+		for (Entry<String, String[]> param : parameters.entrySet())
+			log.debug("param={}", param);
 		return DOWNLOAD_SPLITTED_PAGE;
 	}
 }
