@@ -45,7 +45,7 @@
 			</div>
 		</div>
 
-		<div class="row justify-content-center align-items-center mt-5">
+		<div class="row justify-content-center align-items-center">
 			<div class="col-md-4">
 				<label for="splitIndex">Split at: </label>
 				<input type="text" class="form-control" id="splitIndex" placeholder="Insert page of splitting">
@@ -79,13 +79,13 @@ $(document).ready(function() {
 	
 	function changeLocation(ids) {
 		console.log(ids);
-		const url = new URL('http://localhost:8080/pdf-web-app/downloadSplit');
-		var params = new URLSearchParams(url.search);
-		var count = 1;
+		const url = new URL('http://localhost:8080/pdf-web-app/downloadSplitted');
+		var count = 0;
 		ids.map(id => {
-			params.set('id' + count, id);
+			++count;
+			url.searchParams.set('id' + count, id);
 		});
-		console.log(params.toString());
+		window.location = url;
 	};
 
 	function evaluateResponse(res) {
@@ -120,15 +120,23 @@ $(document).ready(function() {
 		});
 	};
 	
+	function validateInput(id) {
+		if(id && id > 0)
+			return true;
+		else
+			return false;
+	};
+	
 	$splitBtn.click(() => {
 		$errorMsg.css({"display": "none"});
-		ajaxRequest();
+		if(validateInput($splitIndex.val()))
+			ajaxRequest();
 	});
 	
 	$splitIndex.keypress((event) => {
 		$errorMsg.css({"display": "none"});
 		var keycode = (event.keyCode ? event.keyCode : event.which)
-		if(keycode == 13) {
+		if(keycode == 13 && validateInput($splitIndex.val())) {
 			ajaxRequest();
 		}
 	});

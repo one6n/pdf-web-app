@@ -1,9 +1,9 @@
 package it.one6n.pdfwebapp.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,12 +69,23 @@ public class WebController {
 	}
 
 	@GetMapping(DOWNLOAD_SPLITTED_PATH)
-	public String getDownloadSplittedPage(Model model, HttpServletRequest request) {
+	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
 		log.debug("Enter DownloadSplittedPage");
+		log.debug("params={}", params == null ? null : params);
+		List<PdfPojo> documents = new ArrayList<>();
+		try {
+			for (Entry<String, String> param : params.entrySet()) {
+				PdfPojo pdf = getPdfService().findPdfById(Long.parseLong(param.getValue()));
+				if (pdf != null)
+					documents.add(pdf);
+				else
+					throw new Exception("No pdf found with id: " + param.getValue());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		model.addAttribute("title", title);
-		Map<String, String[]> parameters = request.getParameterMap();
-		for (Entry<String, String[]> param : parameters.entrySet())
-			log.debug("param={}", param);
+		model.addAttribute("documents", documents);
 		return DOWNLOAD_SPLITTED_PAGE;
 	}
 }
