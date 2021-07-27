@@ -147,7 +147,6 @@ public class PdfService {
 			++i;
 		}
 		splitted.add(doc2);
-
 		return splitted;
 	}
 }
