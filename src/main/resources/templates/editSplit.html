@@ -131,13 +131,18 @@ $(document).ready(function() {
 		$errorMsg.css({"display": "none"});
 		if(validateInput($splitIndex.val()))
 			ajaxRequest();
+		else
+			showErrorMessage();
 	});
 	
 	$splitIndex.keypress((event) => {
 		$errorMsg.css({"display": "none"});
 		var keycode = (event.keyCode ? event.keyCode : event.which)
-		if(keycode == 13 && validateInput($splitIndex.val())) {
-			ajaxRequest();
+		if(keycode == 13) {
+			if(validateInput($splitIndex.val()))
+				ajaxRequest();
+			else
+				showErrorMessage();
 		}
 	});
 	

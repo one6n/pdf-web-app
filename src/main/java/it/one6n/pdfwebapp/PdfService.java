@@ -6,13 +6,14 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 
-import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -130,10 +131,23 @@ public class PdfService {
 	}
 
 	public List<PDDocument> splitDocument(PDDocument document, int index) throws IOException {
-		List<PDDocument> documents = null;
-		Splitter splitter = new Splitter();
-		splitter.setEndPage(index);
-		documents = splitter.split(document);
-		return documents;
+		List<PDDocument> splitted = null;
+		Iterator<PDPage> iterator = document.getPages().iterator();
+		int i = 0;
+		splitted = new ArrayList<>();
+		PDDocument doc1 = new PDDocument();
+		while (i < index && iterator.hasNext()) {
+			doc1.addPage(iterator.next());
+			++i;
+		}
+		splitted.add(doc1);
+		PDDocument doc2 = new PDDocument();
+		while (iterator.hasNext()) {
+			doc2.addPage(iterator.next());
+			++i;
+		}
+		splitted.add(doc2);
+
+		return splitted;
 	}
 }
