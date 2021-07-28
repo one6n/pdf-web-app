@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.one6n.pdfwebapp.PdfPojo;
-import it.one6n.pdfwebapp.PdfService;
-import it.one6n.pdfwebapp.RestResult;
+import it.one6n.pdfwebapp.models.PdfPojo;
+import it.one6n.pdfwebapp.models.RestResult;
+import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

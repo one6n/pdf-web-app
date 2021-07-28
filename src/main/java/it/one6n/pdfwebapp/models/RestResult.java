@@ -1,4 +1,4 @@
-package it.one6n.pdfwebapp;
+package it.one6n.pdfwebapp.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

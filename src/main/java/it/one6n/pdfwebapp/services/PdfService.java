@@ -1,4 +1,4 @@
-package it.one6n.pdfwebapp;
+package it.one6n.pdfwebapp.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import it.one6n.pdfwebapp.models.PdfPojo;
+import it.one6n.pdfwebapp.repos.PdfRepo;
 import lombok.Getter;
 import lombok.Setter;
 

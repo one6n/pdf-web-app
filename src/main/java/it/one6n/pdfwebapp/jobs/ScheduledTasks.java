@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import it.one6n.pdfwebapp.PdfPojo;
-import it.one6n.pdfwebapp.PdfService;
+import it.one6n.pdfwebapp.models.PdfPojo;
+import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

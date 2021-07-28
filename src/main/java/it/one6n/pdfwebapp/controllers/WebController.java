@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.one6n.pdfwebapp.PdfPojo;
-import it.one6n.pdfwebapp.PdfService;
+import it.one6n.pdfwebapp.models.PdfPojo;
+import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
