@@ -26,35 +26,33 @@
 
 	<nav th:replace="fragments.html :: navbar" />
 	
-	<div class="container mt-5 justify-content-center">
-		<div class="row">
-			<fieldset class="col-md-12 form-inline justify-content-center">
-				<legend class="form-inline font-italic"> PDF Info:</legend>
+	<div class="container-fluid mt-5 justify-content-center">
+	
+		<div class="row justify-content-center">
+			<div class="col-md-12">	
+				<div id="errorMsg" class="alert alert-danger" role="alert" style="display: none;"> Something went wrong, please check the data </div>
+			</div>
+		</div>
+	
+		<fieldset>
+			<legend class="font-italic">Split PDF:</legend>
+				<div class="row justify-content-center align-items-center">
 					<div class="col-md-3">
 						<h5 th:text="|File: ${filename}|" />
 					</div>
 					<div class="col-md-3">
 						<h5 th:text="|Number Of Pages: ${numPages}|" />
 					</div>
-			</fieldset>
-		</div>
-
-		<div class="row justify-content-center mt-5">
-			<div class="col-md-12">	
-				<div id="errorMsg" class="alert alert-danger" role="alert" style="display: none;"> Something went wrong, please check the data </div>
-			</div>
-		</div>
-
-		<div class="row justify-content-center align-items-center">
-			<div class="col-md-4">
-				<label for="splitIndex">Split at: </label>
-				<input type="text" class="form-control" id="splitIndex" placeholder="Insert page of splitting">
-				<small id="idEmployeelHelp" class="form-text text-muted">The page of splitting must be smaller or equals to pdf length</small>
-			</div>
-			<div class="col-md-2 ml-2">
-				<button id="splitBtn" class="btn btn-outline-primary">Split</button>
-			</div>
-		</div>
+					<div class="col-md-3">
+						<label for="splitIndex">Split at: </label>
+						<input type="text" class="form-control" id="splitIndex" placeholder="Insert page of splitting">
+						<small id="idEmployeelHelp" class="form-text text-muted">The page of splitting must be smaller or equals to pdf length</small>
+					</div>
+					<div class="col-md-2 ml-1">
+						<button id="splitBtn" class="btn btn-outline-primary">Split</button>
+					</div>
+				</div>
+		</fieldset>
 	</div>
 	
 	<div th:replace="fragments.html :: bootstrap_script"></div>
