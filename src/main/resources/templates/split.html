@@ -7,6 +7,7 @@
 <link th:replace="fragments.html :: bootstrap_css"/>
 <link th:replace="fragments.html :: bootstrap_icons"/>
 <title th:text="${title}"></title>
+<style th:replace="fragments.html :: fieldset_style"/>
 </head>
 <body>
 
@@ -14,19 +15,21 @@
 	
 	<div class="container mt-5">
 		<div class="row justify-content-center">
-			<form method="POST" th:action="@{/editSplit}" class="form-group" enctype="multipart/form-data">
-				<div class="form-row align-items-center">
-					<div class="form-group col-md-9">
-				    	<label for="uploadFile">Upload File</label>
-				    	<input type="file" name="file" class="form-control-file" id="uploadFileInput" accept=".pdf">
+			<fieldset class="px-3 py-3">
+				<legend class="font-italic">Upload file:</legend>
+				<form method="POST" th:action="@{/editSplit}" class="form-group" enctype="multipart/form-data">
+					<div class="form-row align-items-center">
+						<div class="form-group col-md-9">
+					    	<input type="file" name="file" class="form-control-file" id="uploadFileInput" accept=".pdf">
+						</div>
+						<div class="form-group col-md-3">
+					  		<button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Upload</button>
+						</div>
 					</div>
-					<div class="form-group col-md-3">
-				  		<button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Upload</button>
-					</div>
-				</div>
-			</form>
+				</form>
+			</fieldset>
 		</div>
-		<div class="row justify-content-center">
+		<div class="row justify-content-center mt-5">
 			<a th:href="@{/}" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
 		</div>
 	</div>
