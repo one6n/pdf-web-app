@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.one6n.pdfwebapp.models.PdfPojo;
-import it.one6n.pdfwebapp.models.RestResult;
+import it.one6n.pdfwebapp.models.PdfEntry;
+import it.one6n.pdfwebapp.pojos.RestResult;
 import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,15 +42,15 @@ public class RestWebController {
 			try {
 				Long id = Long.parseLong(input.get("id"));
 				int splitIndex = Integer.parseInt(input.get("splitIndex"));
-				PdfPojo originalPdf = getPdfService().findPdfById(id);
+				PdfEntry originalPdf = getPdfService().findPdfById(id);
 				if (originalPdf != null)
 					if (originalPdf.getNumberOfPages() > splitIndex) {
 						log.debug("File loaded: filename={}, size={}", originalPdf.getFilename(),
 								originalPdf.getData().length());
 						List<Long> ids = new ArrayList<>();
-						List<PdfPojo> splittedDocuments = getPdfService().splitPdf(originalPdf, splitIndex);
-						for (PdfPojo pdf : splittedDocuments) {
-							PdfPojo saved = getPdfService().savePdf(pdf);
+						List<PdfEntry> splittedDocuments = getPdfService().splitPdf(originalPdf, splitIndex);
+						for (PdfEntry pdf : splittedDocuments) {
+							PdfEntry saved = getPdfService().savePdf(pdf);
 							log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(), saved.getId(),
 									saved.getNumberOfPages());
 							ids.add(saved.getId());
@@ -73,7 +73,7 @@ public class RestWebController {
 		byte[] barr = null;
 		if (id != null) {
 			try {
-				PdfPojo pdf = getPdfService().findPdfById(Long.parseLong(id));
+				PdfEntry pdf = getPdfService().findPdfById(Long.parseLong(id));
 				if (pdf == null)
 					throw new RuntimeException("Not found document with id: " + id);
 				barr = getPdfService().deserialize(pdf.getData());

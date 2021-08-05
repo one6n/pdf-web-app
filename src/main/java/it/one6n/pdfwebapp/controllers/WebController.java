@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.one6n.pdfwebapp.models.PdfPojo;
+import it.one6n.pdfwebapp.models.PdfEntry;
 import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,7 +59,7 @@ public class WebController {
 	@PostMapping(EDIT_SPLIT_PATH)
 	public String getEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
 		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
-		PdfPojo pdf = getPdfService().savePdf(inputFile);
+		PdfEntry pdf = getPdfService().savePdf(inputFile);
 		log.debug("Saved: id={}, filename={}", pdf.getId(), pdf.getFilename());
 		model.addAttribute("title", title);
 		model.addAttribute("id", pdf.getId());
@@ -72,10 +72,10 @@ public class WebController {
 	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
 		log.debug("Enter DownloadSplittedPage");
 		log.debug("params={}", params == null ? null : params);
-		List<PdfPojo> documents = new ArrayList<>();
+		List<PdfEntry> documents = new ArrayList<>();
 		try {
 			for (Entry<String, String> param : params.entrySet()) {
-				PdfPojo pdf = getPdfService().findPdfById(Long.parseLong(param.getValue()));
+				PdfEntry pdf = getPdfService().findPdfById(Long.parseLong(param.getValue()));
 				if (pdf != null)
 					documents.add(pdf);
 				else

@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-public class PdfPojo {
+public class PdfEntry {
 
 	@Id
 	@GeneratedValue

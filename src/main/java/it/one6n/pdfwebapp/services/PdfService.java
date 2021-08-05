@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.one6n.pdfwebapp.models.PdfPojo;
-import it.one6n.pdfwebapp.repos.PdfRepo;
+import it.one6n.pdfwebapp.models.PdfEntry;
+import it.one6n.pdfwebapp.repos.PdfEntryRepo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,9 +29,9 @@ import lombok.Setter;
 public class PdfService {
 
 	@Autowired
-	private PdfRepo pdfRepo;
+	private PdfEntryRepo pdfRepo;
 
-	public PdfPojo findPdfById(Long id) {
+	public PdfEntry findPdfById(Long id) {
 		return getPdfRepo().findById(id).orElse(null);
 	}
 
@@ -40,30 +40,30 @@ public class PdfService {
 			getPdfRepo().deleteById(id);
 	}
 
-	public PdfPojo savePdf(MultipartFile inputFile) {
+	public PdfEntry savePdf(MultipartFile inputFile) {
 		if (inputFile.isEmpty())
 			return null;
 
 		try {
-			return savePdf(buildPdfPojoFromMultipartFile(inputFile));
+			return savePdf(buildPdfEntryFromMultipartFile(inputFile));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public PdfPojo savePdf(PdfPojo pdf) {
+	public PdfEntry savePdf(PdfEntry pdf) {
 		if (pdf == null)
 			return null;
 
 		return getPdfRepo().save(pdf);
 	}
 
-	public List<PdfPojo> findAllOrderByDateDesc() {
+	public List<PdfEntry> findAllOrderByDateDesc() {
 		return getPdfRepo().findAllOrderByInsertDateDesc();
 	}
 
-	public PdfPojo buildPdfPojoFromMultipartFile(MultipartFile file) throws IOException, SerialException, SQLException {
-		PdfPojo pdf = new PdfPojo();
+	public PdfEntry buildPdfEntryFromMultipartFile(MultipartFile file) throws IOException, SerialException, SQLException {
+		PdfEntry pdf = new PdfEntry();
 		byte[] barr = file.getBytes();
 		Blob data = new SerialBlob(barr);
 		pdf.setFilename(file.getOriginalFilename());
@@ -73,37 +73,37 @@ public class PdfService {
 		return pdf;
 	}
 
-	public List<PdfPojo> buildPdfPojoFromDocuments(List<PDDocument> documents, String baseFilename)
+	public List<PdfEntry> buildPdfEntryFromDocuments(List<PDDocument> documents, String baseFilename)
 			throws IOException, SerialException, SQLException {
-		List<PdfPojo> pojos = null;
+		List<PdfEntry> entries = null;
 		if (documents != null && baseFilename != null) {
-			pojos = new ArrayList<>();
+			entries = new ArrayList<>();
 			int counter = 1;
 			for (PDDocument doc : documents)
 				try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-					PdfPojo pojo = new PdfPojo();
+					PdfEntry entry = new PdfEntry();
 					String filename = baseFilename.substring(0, baseFilename.indexOf(".pdf")) + "_" + counter + ".pdf";
-					pojo.setFilename(filename);
-					pojo.setNumberOfPages(doc.getNumberOfPages());
-					pojo.setInsertDate(new Date());
+					entry.setFilename(filename);
+					entry.setNumberOfPages(doc.getNumberOfPages());
+					entry.setInsertDate(new Date());
 					doc.save(bos);
-					pojo.setData(new SerialBlob(bos.toByteArray()));
-					pojos.add(pojo);
+					entry.setData(new SerialBlob(bos.toByteArray()));
+					entries.add(entry);
 					++counter;
 				}
 		}
-		return pojos;
+		return entries;
 	}
 
-	public List<PdfPojo> splitPdf(PdfPojo pdf, int delimiter) throws SQLException, IOException {
-		List<PdfPojo> splittedPdf = null;
+	public List<PdfEntry> splitPdf(PdfEntry pdf, int delimiter) throws SQLException, IOException {
+		List<PdfEntry> splittedPdf = null;
 		if (pdf != null) {
 			splittedPdf = new ArrayList<>();
 			byte[] barr = deserialize(pdf.getData());
 			List<PDDocument> splittedDocuments = null;
 			try (PDDocument docOriginal = PDDocument.load(barr)) {
 				splittedDocuments = splitDocument(docOriginal, delimiter);
-				splittedPdf = buildPdfPojoFromDocuments(splittedDocuments, pdf.getFilename());
+				splittedPdf = buildPdfEntryFromDocuments(splittedDocuments, pdf.getFilename());
 			} finally {
 				for (PDDocument doc : splittedDocuments)
 					doc.close();

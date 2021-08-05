@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import it.one6n.pdfwebapp.models.PdfPojo;
+import it.one6n.pdfwebapp.models.PdfEntry;
 import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +27,11 @@ public class ScheduledTasks {
 	public void removeOldPdf() {
 		log.info("job REMOVE OLD PDF start");
 
-		List<PdfPojo> oldPdf = getPdfService().findAllOrderByDateDesc();
-		for (PdfPojo pojo : oldPdf)
-			if (System.currentTimeMillis() - pojo.getInsertDate().getTime() > maxAge) {
-				getPdfService().deletePdfById(pojo.getId());
-				log.debug("deleting pdf={}, insertDate={}", pojo.getFilename(), pojo.getInsertDate());
+		List<PdfEntry> oldEntries = getPdfService().findAllOrderByDateDesc();
+		for (PdfEntry entry : oldEntries)
+			if (System.currentTimeMillis() - entry.getInsertDate().getTime() > maxAge) {
+				getPdfService().deletePdfById(entry.getId());
+				log.debug("deleting pdf={}, insertDate={}", entry.getFilename(), entry.getInsertDate());
 			}
 
 		log.info("job REMOVE OLD PDF end");
