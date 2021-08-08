@@ -8,21 +8,19 @@ import org.springframework.stereotype.Service;
 
 import com.mongodb.client.MongoClient;
 
-import it.one6n.pdfwebapp.repos.PdfEntryMongoRepo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
 @Service
-public class MongoService {
+public class BaseMongoService {
 
 	@Autowired
 	private MongoClient mongoClient;
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	@Autowired
-	private PdfEntryMongoRepo pdfEntryMongoRepo;
 
 	public Set<String> getCollections() {
 		Set<String> collections = getMongoTemplate().getCollectionNames();
@@ -31,6 +29,18 @@ public class MongoService {
 	}
 
 	public void createCollection(String collectionName) {
-		mongoTemplate.createCollection(collectionName);
+		getMongoTemplate().createCollection(collectionName);
+	}
+
+	public void insertDocument(Object obj, String collectionName) {
+		getMongoTemplate().insert(obj, collectionName);
+	}
+
+	public void saveDocument(Object obj, String collectionName) {
+		getMongoTemplate().save(obj, collectionName);
+	}
+
+	public void removeDocument(Object obj, String collectionName) {
+		getMongoTemplate().remove(obj, collectionName);
 	}
 }
