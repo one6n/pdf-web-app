@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Id;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
@@ -17,7 +18,7 @@ import lombok.Setter;
 public class PdfMongoEntry {
 
 	@Id
-	private Long id;
+	private ObjectId id;
 	private String filename;
 	private int numberOfPages;
 	private Date insertDate;

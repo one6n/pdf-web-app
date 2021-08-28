@@ -1,6 +1,7 @@
 package it.one6n.pdfwebapp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import it.one6n.pdfwebapp.repos.PdfMongoEntryRepo;
@@ -14,5 +15,7 @@ public class PdfMongoService extends BaseMongoService {
 
 	@Autowired
 	private PdfMongoEntryRepo pdfMongoEntryRepo;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 }
