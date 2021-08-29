@@ -53,17 +53,47 @@ class PdfWebAppApplicationTests {
 		for (int i = 0; i < numberOfEntries; i++) {
 			entry = new PdfMongoEntry();
 			entry.setFilename("testFilename" + (i + 1));
+			entry.setNumberOfPages(i + 1);
 			assertNotNull(getPdfMongoService().getPdfMongoEntryRepo().save(entry));
-			log.debug("created entries={}", entry.getFilename());
+			log.debug("created entries: filename={}, numberOfPages={}", entry.getFilename(), entry.getNumberOfPages());
 		}
 
 		List<PdfMongoEntry> entries = new ArrayList<>();
 		entries = getPdfMongoService().getMongoTemplate().findAll(PdfMongoEntry.class);
 		assertEquals(5, entries.size());
 
+		entries.clear();
 		Query query = new Query();
-		query.addCriteria(Criteria.where("filename").is("testFilename1"));
-		List<PdfMongoEntry> e = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
-		assertEquals(1, e.size());
+		query.addCriteria(Criteria.where("filename").is("testFilename1")).limit(1);
+		entries = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		assertEquals(1, entries.size());
+		assertEquals("testFilename1", entries.get(0).getFilename());
+
+		entries.clear();
+		query = new Query();
+		Criteria criteria = new Criteria();
+		List<Criteria> criterias = new ArrayList<>();
+		criterias.add(Criteria.where("filename").is("testFilename1"));
+		criterias.add(Criteria.where("filename").is("testFilename2"));
+		query.addCriteria(criteria.orOperator(criterias));
+		log.debug("query={}", query);
+		entries = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		assertEquals(2, entries.size());
+		assertEquals("testFilename1", entries.get(0).getFilename());
+		assertEquals("testFilename2", entries.get(1).getFilename());
+
+		entries.clear();
+		criterias.clear();
+		query = new Query();
+		criteria = new Criteria();
+		criterias.add(Criteria.where("filename").regex("testFilename"));
+		criterias.add(Criteria.where("numberOfPages").gt(1));
+		criteria.andOperator(criterias);
+		query.addCriteria(criteria);
+		log.debug("query={}", query);
+		entries = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		assertEquals(4, entries.size());
+		assertEquals("testFilename2", entries.get(0).getFilename());
+		assertEquals(2, entries.get(0).getNumberOfPages());
 	}
 }
