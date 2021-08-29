@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
 import it.one6n.pdfwebapp.services.PdfMongoService;
@@ -59,5 +61,9 @@ class PdfWebAppApplicationTests {
 		entries = getPdfMongoService().getMongoTemplate().findAll(PdfMongoEntry.class);
 		assertEquals(5, entries.size());
 
+		Query query = new Query();
+		query.addCriteria(Criteria.where("filename").is("testFilename1"));
+		List<PdfMongoEntry> e = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		assertEquals(1, e.size());
 	}
 }
