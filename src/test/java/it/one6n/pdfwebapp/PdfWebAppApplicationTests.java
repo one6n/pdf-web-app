@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -120,5 +121,16 @@ class PdfWebAppApplicationTests {
 		assertNotNull(result);
 		assertEquals("test.pdf", result.getFilename());
 		assertEquals(id, result.getId().asObjectId().getValue());
+
+		query = new Query();
+		Document metadata = new Document();
+		metadata.append("testMetadata", "test");
+		id = getGridFsTemplate().store(getTestFile().getInputStream(), getTestFile().getFilename(), metadata);
+		query.addCriteria(Criteria.where("metadata.testMetadata").is("test"));
+		result = getGridFsTemplate().findOne(query);
+		assertNotNull(result);
+		assertEquals("test.pdf", result.getFilename());
+		assertEquals(id, result.getId().asObjectId().getValue());
+		assertEquals("test", result.getMetadata().get("testMetadata"));
 	}
 }
