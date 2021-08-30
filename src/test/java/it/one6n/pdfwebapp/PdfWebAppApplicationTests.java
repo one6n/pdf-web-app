@@ -7,12 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+
+import com.mongodb.client.gridfs.model.GridFSFile;
 
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
 import it.one6n.pdfwebapp.services.PdfMongoService;
@@ -25,6 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 class PdfWebAppApplicationTests {
 	@Autowired
 	private PdfMongoService pdfMongoService;
+	@Autowired
+	private GridFsTemplate gridFsTemplate;
+
+	@Value("classpath:test.pdf")
+	private Resource testFile;
 
 	@BeforeEach
 	public void clearDB() {
@@ -45,7 +56,7 @@ class PdfWebAppApplicationTests {
 	}
 
 	@Test
-	public void shouldSaveAndFindEntries() {
+	public void shouldSaveAndFindEntriesWithQueryCriteria() {
 		getPdfMongoService().createCollection("test");
 
 		PdfMongoEntry entry = null;
@@ -95,5 +106,19 @@ class PdfWebAppApplicationTests {
 		assertEquals(4, entries.size());
 		assertEquals("testFilename2", entries.get(0).getFilename());
 		assertEquals(2, entries.get(0).getNumberOfPages());
+	}
+
+	@Test
+	public void shouldSaveAndFindWithGridFsTemplate() throws Exception {
+		log.info("ResourceFilename={}", getTestFile().getFilename());
+		ObjectId id = getGridFsTemplate().store(getTestFile().getInputStream(), "test.pdf");
+		assertNotNull(id);
+
+		Query query = new Query();
+		query.addCriteria(Criteria.where("filename").is("test.pdf"));
+		GridFSFile result = getGridFsTemplate().find(query).first();
+		assertNotNull(result);
+		assertEquals("test.pdf", result.getFilename());
+		assertEquals(id, result.getId().asObjectId().getValue());
 	}
 }
