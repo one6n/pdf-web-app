@@ -36,7 +36,7 @@ public class BaseMongoService {
 		getMongoTemplate().createCollection(collectionName);
 	}
 
-	public GridFSBucket createBucket(String bucketName) {
+	public GridFSBucket findOrCreateBucket(String bucketName) {
 		return GridFSBuckets.create(getMongoClient().getDatabase(getDbName()), bucketName);
 	}
 
@@ -47,7 +47,7 @@ public class BaseMongoService {
 	 * @param collectionName name of the collection to use
 	 * @return the inserted object
 	 */
-	public Object insertDocument(Object obj, String collectionName) {
+	public Object insert(Object obj, String collectionName) {
 		return getMongoTemplate().insert(obj, collectionName);
 	}
 
@@ -58,11 +58,11 @@ public class BaseMongoService {
 	 * @param collectionName name of the collection to use
 	 * @return the inserted object
 	 */
-	public Object saveDocument(Object obj, String collectionName) {
+	public Object save(Object obj, String collectionName) {
 		return getMongoTemplate().save(obj, collectionName);
 	}
 
-	public DeleteResult removeDocument(Object obj, String collectionName) {
+	public DeleteResult delete(Object obj, String collectionName) {
 		return getMongoTemplate().remove(obj, collectionName);
 	}
 }

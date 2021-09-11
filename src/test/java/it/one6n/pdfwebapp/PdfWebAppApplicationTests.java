@@ -57,7 +57,7 @@ class PdfWebAppApplicationTests {
 		for (String collection : collections)
 			log.info("collection={}", collection);
 		log.info("Cleaning Test Bucket");
-		GridFSBucket testBucket = getPdfMongoService().createBucket(TEST_BUCKET_NAME);
+		GridFSBucket testBucket = getPdfMongoService().findOrCreateBucket(TEST_BUCKET_NAME);
 		testBucket.drop();
 		log.info("Cleaning standard Bucket from test file");
 		Query query = new Query();
@@ -89,7 +89,7 @@ class PdfWebAppApplicationTests {
 			entry = new PdfMongoEntry();
 			entry.setFilename("testFilename" + (i + 1));
 			entry.setNumberOfPages(i + 1);
-			assertNotNull(getPdfMongoService().insertDocument(entry, TEST_COLLECTION_NAME));
+			assertNotNull(getPdfMongoService().insert(entry, TEST_COLLECTION_NAME));
 			log.debug("created entries: filename={}, numberOfPages={}", entry.getFilename(), entry.getNumberOfPages());
 		}
 
