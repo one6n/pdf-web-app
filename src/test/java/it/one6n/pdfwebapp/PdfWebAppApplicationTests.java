@@ -100,7 +100,7 @@ class PdfWebAppApplicationTests {
 		entries.clear();
 		Query query = new Query();
 		query.addCriteria(Criteria.where("filename").is("testFilename1")).limit(1);
-		entries = getMongoTemplate().find(query, PdfMongoEntry.class);
+		entries = getMongoTemplate().find(query, PdfMongoEntry.class, TEST_COLLECTION_NAME);
 		assertEquals(1, entries.size());
 		assertEquals("testFilename1", entries.get(0).getFilename());
 
