@@ -2,6 +2,7 @@ package it.one6n.pdfwebapp;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
 
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
@@ -30,8 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @SpringBootTest
 class PdfWebAppApplicationTests {
+
+	public static final String TEST_COLLECTION_NAME = "test";
+	public static final String TEST_BUCKET_NAME = "testBucket";
+
 	@Autowired
 	private PdfMongoService pdfMongoService;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	@Autowired
 	private GridFsTemplate gridFsTemplate;
 
@@ -40,7 +50,22 @@ class PdfWebAppApplicationTests {
 
 	@BeforeEach
 	public void clearDB() {
-		getPdfMongoService().getMongoTemplate().dropCollection("test");
+		log.info("Cleaning Test Collection");
+		getMongoTemplate().dropCollection(TEST_COLLECTION_NAME);
+		Set<String> collections = getPdfMongoService().getCollections();
+		log.info("Remaining Collection:");
+		for (String collection : collections)
+			log.info("collection={}", collection);
+		log.info("Cleaning Test Bucket");
+		GridFSBucket testBucket = getPdfMongoService().createBucket(TEST_BUCKET_NAME);
+		testBucket.drop();
+		log.info("Cleaning standard Bucket from test file");
+		Query query = new Query();
+		query.addCriteria(Criteria.where("filename").regex("test"));
+		GridFSFindIterable testFiles = getGridFsTemplate().find(query);
+		for (GridFSFile file : testFiles)
+			log.info("fileDeletedFromFiles.fs={}", file.getFilename());
+		getGridFsTemplate().delete(query);
 	}
 
 	@Test
@@ -49,16 +74,14 @@ class PdfWebAppApplicationTests {
 
 	@Test
 	public void shouldCreateMongoCollection() {
-		getPdfMongoService().createCollection("test");
+		getPdfMongoService().createCollection(TEST_COLLECTION_NAME);
 		Set<String> collections = getPdfMongoService().getCollections();
-		assertEquals(1, collections.size());
-		for (String collectionName : collections)
-			assertEquals("test", collectionName);
+		assertTrue(collections.contains(TEST_COLLECTION_NAME));
 	}
 
 	@Test
 	public void shouldSaveAndFindEntriesWithQueryCriteria() {
-		getPdfMongoService().createCollection("test");
+		getPdfMongoService().createCollection(TEST_COLLECTION_NAME);
 
 		PdfMongoEntry entry = null;
 		int numberOfEntries = 5;
@@ -66,18 +89,18 @@ class PdfWebAppApplicationTests {
 			entry = new PdfMongoEntry();
 			entry.setFilename("testFilename" + (i + 1));
 			entry.setNumberOfPages(i + 1);
-			assertNotNull(getPdfMongoService().getPdfMongoEntryRepo().save(entry));
+			assertNotNull(getPdfMongoService().insertDocument(entry, TEST_COLLECTION_NAME));
 			log.debug("created entries: filename={}, numberOfPages={}", entry.getFilename(), entry.getNumberOfPages());
 		}
 
 		List<PdfMongoEntry> entries = new ArrayList<>();
-		entries = getPdfMongoService().getMongoTemplate().findAll(PdfMongoEntry.class);
+		entries = getMongoTemplate().findAll(PdfMongoEntry.class, TEST_COLLECTION_NAME);
 		assertEquals(5, entries.size());
 
 		entries.clear();
 		Query query = new Query();
 		query.addCriteria(Criteria.where("filename").is("testFilename1")).limit(1);
-		entries = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		entries = getMongoTemplate().find(query, PdfMongoEntry.class);
 		assertEquals(1, entries.size());
 		assertEquals("testFilename1", entries.get(0).getFilename());
 
@@ -89,7 +112,7 @@ class PdfWebAppApplicationTests {
 		criterias.add(Criteria.where("filename").is("testFilename2"));
 		query.addCriteria(criteria.orOperator(criterias));
 		log.debug("query={}", query);
-		entries = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		entries = getMongoTemplate().find(query, PdfMongoEntry.class, TEST_COLLECTION_NAME);
 		assertEquals(2, entries.size());
 		assertEquals("testFilename1", entries.get(0).getFilename());
 		assertEquals("testFilename2", entries.get(1).getFilename());
@@ -103,7 +126,7 @@ class PdfWebAppApplicationTests {
 		criteria.andOperator(criterias);
 		query.addCriteria(criteria);
 		log.debug("query={}", query);
-		entries = getPdfMongoService().getMongoTemplate().find(query, PdfMongoEntry.class);
+		entries = getMongoTemplate().find(query, PdfMongoEntry.class, TEST_COLLECTION_NAME);
 		assertEquals(4, entries.size());
 		assertEquals("testFilename2", entries.get(0).getFilename());
 		assertEquals(2, entries.get(0).getNumberOfPages());
