@@ -1,14 +1,14 @@
 package it.one6n.pdfwebapp.configs;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.mongodb.ConnectionString;
 
+/*
+ * Add @Configuration for custom config
+ */
 public class MyMongoConfig extends BaseMongoConfig {
 
-	@Value("${mongo.database.name}")
-	private String dbName;
-
 	@Override
-	protected String getDatabaseName() {
-		return dbName;
+	public ConnectionString getConnectionString() {
+		return new ConnectionString(getConnectionUri());
 	}
 }
