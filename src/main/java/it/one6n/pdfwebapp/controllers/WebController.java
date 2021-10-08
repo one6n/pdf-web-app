@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
+import it.one6n.pdfwebapp.models.PdfMongoEntry;
+import it.one6n.pdfwebapp.services.PdfMongoService;
 import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +31,7 @@ public class WebController {
 	public static final String HOME_PATH = "/";
 	public static final String SPLIT_PATH = "/split";
 	public static final String EDIT_SPLIT_PATH = "/editSplit";
+	public static final String MONGO_EDIT_SPLIT_PATH = "/mongoEditSplit";
 	public static final String DOWNLOAD_SPLITTED_PATH = "/downloadSplitted";
 
 	public final static String HOME_PAGE = "home";
@@ -41,6 +44,8 @@ public class WebController {
 
 	@Autowired
 	private PdfService pdfService;
+	@Autowired
+	private PdfMongoService pdfMongoService;
 
 	@GetMapping(HOME_PATH)
 	public String getHomePage(Model model) {
@@ -65,6 +70,19 @@ public class WebController {
 		model.addAttribute("id", pdf.getId());
 		model.addAttribute("filename", pdf.getFilename());
 		model.addAttribute("numPages", pdf.getNumberOfPages());
+		return EDIT_SPLIT_PAGE;
+	}
+
+	@PostMapping(MONGO_EDIT_SPLIT_PATH)
+	public String getMongoEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
+		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
+		PdfMongoEntry entry = getPdfMongoService().savePdf(inputFile);
+		log.debug("Saved: entryId={}, gridFsId={}, filename={}", entry.getId(), entry.getGridFsId(),
+				entry.getFilename());
+		model.addAttribute("title", title);
+		model.addAttribute("id", entry.getId());
+		model.addAttribute("filename", entry.getFilename());
+		model.addAttribute("numPages", entry.getNumberOfPages());
 		return EDIT_SPLIT_PAGE;
 	}
 

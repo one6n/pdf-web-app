@@ -1,0 +1,4 @@
+If the mongo db running on localhost:
+docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp pdf-web-app
+else
+docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@hostname:27017/pdfApp pdf-web-app

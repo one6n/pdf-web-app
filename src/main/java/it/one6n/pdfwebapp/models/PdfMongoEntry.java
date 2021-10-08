@@ -19,6 +19,7 @@ public class PdfMongoEntry {
 
 	@Id
 	private ObjectId id;
+	private ObjectId gridFsId;
 	private String filename;
 	private int numberOfPages;
 	private Date insertDate;

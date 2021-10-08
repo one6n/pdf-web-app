@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
 import it.one6n.pdfwebapp.pojos.RestResult;
+import it.one6n.pdfwebapp.services.PdfMongoService;
 import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +31,12 @@ public class RestWebController {
 	public static final String DOWNLOAD_PDF_PATH = "/downloadPdf/{id}";
 
 	public static final String SPLIT_FILE_PATH = "/splitFile";
+	public static final String SPLIT_FILE_MONGO_PATH = "/splitFileMongo";
 
 	@Autowired
 	private PdfService pdfService;
+	@Autowired
+	private PdfMongoService pdfMongoService;
 
 	@PostMapping(path = SPLIT_FILE_PATH, produces = "application/json")
 	public RestResult splitFile(@RequestBody Map<String, String> input) {
@@ -66,6 +70,27 @@ public class RestWebController {
 		}
 		return result;
 	}
+
+	/*
+	 * @PostMapping(path = SPLIT_FILE_MONGO_PATH, produces = "application/json")
+	 * public RestResult splitFileMongo(@RequestBody Map<String, String> input) {
+	 * log.debug("input={}", input); RestResult result = new RestResult(false); if
+	 * (input != null) { try { ObjectId id = new ObjectId(input.get("id")); int
+	 * splitIndex = Integer.parseInt(input.get("splitIndex")); PdfMongoEntry
+	 * originalPdfEntry = getPdfMongoService().findById(id); if (originalPdfEntry !=
+	 * null) if (originalPdfEntry.getNumberOfPages() > splitIndex) {
+	 * 
+	 * log.debug("File loaded: filename={}, size={}",
+	 * originalPdfEntry.getFilename(), originalPdfEntry.getData().length());
+	 * List<Long> ids = new ArrayList<>(); List<PdfEntry> splittedDocuments =
+	 * getPdfService().splitPdf(originalPdfEntry, splitIndex); for (PdfEntry pdf :
+	 * splittedDocuments) { PdfEntry saved = getPdfService().savePdf(pdf);
+	 * log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(),
+	 * saved.getId(), saved.getNumberOfPages()); ids.add(saved.getId()); }
+	 * getPdfService().deletePdfById(originalPdfEntry.getId()); result.setData(ids);
+	 * } } catch (Exception e) { throw new RuntimeException(e); } if
+	 * (result.getData() != null) result.setResult(true); } return result; }
+	 */
 
 	@GetMapping(path = DOWNLOAD_PDF_PATH, produces = "application/pdf")
 	public @ResponseBody byte[] downloadPdf(@PathVariable String id, HttpServletResponse response) {
