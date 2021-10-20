@@ -1,11 +1,13 @@
 package it.one6n.pdfwebapp.controllers;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
+import it.one6n.pdfwebapp.models.PdfMongoEntry;
 import it.one6n.pdfwebapp.pojos.RestResult;
 import it.one6n.pdfwebapp.services.PdfMongoService;
 import it.one6n.pdfwebapp.services.PdfService;
@@ -71,26 +74,43 @@ public class RestWebController {
 		return result;
 	}
 
-	/*
-	 * @PostMapping(path = SPLIT_FILE_MONGO_PATH, produces = "application/json")
-	 * public RestResult splitFileMongo(@RequestBody Map<String, String> input) {
-	 * log.debug("input={}", input); RestResult result = new RestResult(false); if
-	 * (input != null) { try { ObjectId id = new ObjectId(input.get("id")); int
-	 * splitIndex = Integer.parseInt(input.get("splitIndex")); PdfMongoEntry
-	 * originalPdfEntry = getPdfMongoService().findById(id); if (originalPdfEntry !=
-	 * null) if (originalPdfEntry.getNumberOfPages() > splitIndex) {
-	 * 
-	 * log.debug("File loaded: filename={}, size={}",
-	 * originalPdfEntry.getFilename(), originalPdfEntry.getData().length());
-	 * List<Long> ids = new ArrayList<>(); List<PdfEntry> splittedDocuments =
-	 * getPdfService().splitPdf(originalPdfEntry, splitIndex); for (PdfEntry pdf :
-	 * splittedDocuments) { PdfEntry saved = getPdfService().savePdf(pdf);
-	 * log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(),
-	 * saved.getId(), saved.getNumberOfPages()); ids.add(saved.getId()); }
-	 * getPdfService().deletePdfById(originalPdfEntry.getId()); result.setData(ids);
-	 * } } catch (Exception e) { throw new RuntimeException(e); } if
-	 * (result.getData() != null) result.setResult(true); } return result; }
-	 */
+	@PostMapping(path = SPLIT_FILE_MONGO_PATH, produces = "application/json")
+	public RestResult splitFileMongo(@RequestBody Map<String, String> input) {
+		log.debug("input={}", input);
+		RestResult result = new RestResult(false);
+		if (input != null) {
+			try {
+				String id = input.get("id");
+				int splitIndex = Integer.parseInt(input.get("splitIndex"));
+				PdfMongoEntry originalPdfEntry = getPdfMongoService().findPdfEntryById(id);
+				if (originalPdfEntry != null)
+					if (originalPdfEntry.getNumberOfPages() > splitIndex) {
+						try (InputStream is = getPdfMongoService().findPdfFile(originalPdfEntry.getGridFsId(),
+								originalPdfEntry.getInsertDate())) {
+							byte[] barr = IOUtils.toByteArray(is);
+							log.debug("File loaded: filename={}, size={}", originalPdfEntry.getFilename(), barr.length);
+							List<String> ids = new ArrayList<>();
+							List<PdfMongoEntry> splittedDocuments = getPdfMongoService().splitPdfFromByteArray(barr,
+									originalPdfEntry.getFilename(), splitIndex);
+							for (PdfMongoEntry pdf : splittedDocuments) {
+								PdfMongoEntry saved = getPdfMongoService().savePdfMongoEntry(pdf);
+								log.debug("pdf={}, id={}, numberOfPages={}", saved.getFilename(), saved.getId(),
+										saved.getNumberOfPages());
+								ids.add(saved.getId());
+							}
+							getPdfMongoService().deletePdfEntryAndFile(originalPdfEntry.getId(),
+									originalPdfEntry.getGridFsId(), originalPdfEntry.getInsertDate());
+							result.setData(ids);
+						}
+					}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			if (result.getData() != null)
+				result.setResult(true);
+		}
+		return result;
+	}
 
 	@GetMapping(path = DOWNLOAD_PDF_PATH, produces = "application/pdf")
 	public @ResponseBody byte[] downloadPdf(@PathVariable String id, HttpServletResponse response) {

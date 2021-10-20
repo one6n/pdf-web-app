@@ -62,7 +62,8 @@ public class PdfService {
 		return getPdfRepo().findAllOrderByInsertDateDesc();
 	}
 
-	public PdfEntry buildPdfEntryFromMultipartFile(MultipartFile file) throws IOException, SerialException, SQLException {
+	public PdfEntry buildPdfEntryFromMultipartFile(MultipartFile file)
+			throws IOException, SerialException, SQLException {
 		PdfEntry pdf = new PdfEntry();
 		byte[] barr = file.getBytes();
 		Blob data = new SerialBlob(barr);

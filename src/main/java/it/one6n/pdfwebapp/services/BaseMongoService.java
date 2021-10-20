@@ -126,18 +126,18 @@ public class BaseMongoService {
 		return bucket.openDownloadStream(filename);
 	}
 
-	public void storeFileFromInputStream(String bucketName, String filename, InputStream is,
+	public ObjectId storeFileFromInputStream(String bucketName, String filename, InputStream is,
 			GridFSUploadOptions metadata) {
 		GridFSBucket bucket = findOrCreateBucket(bucketName);
 		if (metadata != null)
-			bucket.uploadFromStream(filename, is, metadata);
+			return bucket.uploadFromStream(filename, is, metadata);
 		else
-			storeFileFromInputStream(bucketName, filename, is);
+			return storeFileFromInputStream(bucketName, filename, is);
 	}
 
-	public void storeFileFromInputStream(String bucketName, String filename, InputStream is) {
+	public ObjectId storeFileFromInputStream(String bucketName, String filename, InputStream is) {
 		GridFSBucket bucket = findOrCreateBucket(bucketName);
-		bucket.uploadFromStream(filename, is);
+		return bucket.uploadFromStream(filename, is);
 	}
 
 	public void deleteFileById(String bucketName, ObjectId id) {

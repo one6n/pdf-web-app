@@ -76,7 +76,7 @@ public class WebController {
 	@PostMapping(MONGO_EDIT_SPLIT_PATH)
 	public String getMongoEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
 		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
-		PdfMongoEntry entry = getPdfMongoService().savePdf(inputFile);
+		PdfMongoEntry entry = getPdfMongoService().savePdfMongoEntryAndFileFromMultipartFile(inputFile);
 		log.debug("Saved: entryId={}, gridFsId={}, filename={}", entry.getId(), entry.getGridFsId(),
 				entry.getFilename());
 		model.addAttribute("title", title);

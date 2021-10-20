@@ -18,7 +18,7 @@ import lombok.Setter;
 public class PdfMongoEntry {
 
 	@Id
-	private ObjectId id;
+	private String id;
 	private ObjectId gridFsId;
 	private String filename;
 	private int numberOfPages;
