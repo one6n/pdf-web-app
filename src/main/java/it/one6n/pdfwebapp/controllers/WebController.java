@@ -30,13 +30,16 @@ public class WebController {
 
 	public static final String HOME_PATH = "/";
 	public static final String SPLIT_PATH = "/split";
+	public static final String MONGO_SPLIT_PATH = "/mongoSplit";
 	public static final String EDIT_SPLIT_PATH = "/editSplit";
 	public static final String MONGO_EDIT_SPLIT_PATH = "/mongoEditSplit";
 	public static final String DOWNLOAD_SPLITTED_PATH = "/downloadSplitted";
 
 	public final static String HOME_PAGE = "home";
 	public static final String SPLIT_PAGE = "split";
+	public static final String MONGO_SPLIT_PAGE = "mongoSplit";
 	public static final String EDIT_SPLIT_PAGE = "editSplit";
+	public static final String MONGO_EDIT_SPLIT_PAGE = "mongoEditSplit";
 	private static final String DOWNLOAD_SPLITTED_PAGE = "downloadSplitted";
 
 	@Value("${spring.application.name}")
@@ -61,6 +64,13 @@ public class WebController {
 		return SPLIT_PAGE;
 	}
 
+	@GetMapping(MONGO_SPLIT_PATH)
+	public String getSplitMongoPage(Model model) {
+		log.debug("Enter SplitPage");
+		model.addAttribute("title", title);
+		return MONGO_SPLIT_PAGE;
+	}
+
 	@PostMapping(EDIT_SPLIT_PATH)
 	public String getEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
 		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
@@ -83,7 +93,8 @@ public class WebController {
 		model.addAttribute("id", entry.getId());
 		model.addAttribute("filename", entry.getFilename());
 		model.addAttribute("numPages", entry.getNumberOfPages());
-		return EDIT_SPLIT_PAGE;
+		log.debug("model={}", model);
+		return MONGO_EDIT_SPLIT_PAGE;
 	}
 
 	@GetMapping(DOWNLOAD_SPLITTED_PATH)

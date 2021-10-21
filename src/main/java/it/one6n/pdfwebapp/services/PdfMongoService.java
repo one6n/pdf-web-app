@@ -4,8 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,21 +39,19 @@ public class PdfMongoService extends BaseMongoService {
 	}
 
 	public String buildPdfFileBucketName(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
+		String formattedDate = new SimpleDateFormat("yyyyMMdd").format(date);
 		StringBuilder sb = new StringBuilder("pdfFile_");
-		sb.append(calendar.get(Calendar.YEAR));
-		sb.append(calendar.get(Calendar.MONTH + 1));
-		sb.append(calendar.get(Calendar.DAY_OF_MONTH));
+		sb.append(formattedDate);
 		return sb.toString();
 	}
 
 	// Need to be modified
 	public PdfMongoEntry savePdfMongoEntryAndFileFromMultipartFile(MultipartFile inputFile) {
 		try {
-			ObjectId gridFsId = uploadFileFromInputStream(buildPdfFileBucketName(new Date()),
+			ObjectId gridFsId = storeFileFromInputStream(buildPdfFileBucketName(new Date()),
 					inputFile.getOriginalFilename(), inputFile.getInputStream());
-			return buildPdfMongoEntryFromMultipartFile(inputFile, gridFsId);
+			PdfMongoEntry entry = buildPdfMongoEntryFromMultipartFile(inputFile, gridFsId);
+			return savePdfMongoEntry(entry);
 		} catch (IOException e) {
 			throw new RuntimeException("Error, file corrupted");
 		}
