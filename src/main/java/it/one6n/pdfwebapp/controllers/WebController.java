@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
@@ -84,17 +85,18 @@ public class WebController {
 	}
 
 	@PostMapping(MONGO_EDIT_SPLIT_PATH)
-	public String getMongoEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
+	public ModelAndView getMongoEditSplitPage(@RequestParam("file") MultipartFile inputFile) {
 		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
+		ModelAndView model = new ModelAndView(MONGO_EDIT_SPLIT_PAGE);
 		PdfMongoEntry entry = getPdfMongoService().savePdfMongoEntryAndFileFromMultipartFile(inputFile);
 		log.debug("Saved: entryId={}, gridFsId={}, filename={}", entry.getId(), entry.getGridFsId(),
 				entry.getFilename());
-		model.addAttribute("title", title);
-		model.addAttribute("id", entry.getId());
-		model.addAttribute("filename", entry.getFilename());
-		model.addAttribute("numPages", entry.getNumberOfPages());
+		model.addObject("title", title);
+		model.addObject("id", entry.getId());
+		model.addObject("filename", entry.getFilename());
+		model.addObject("numPages", entry.getNumberOfPages());
 		log.debug("model={}", model);
-		return MONGO_EDIT_SPLIT_PAGE;
+		return model;
 	}
 
 	@GetMapping(DOWNLOAD_SPLITTED_PATH)

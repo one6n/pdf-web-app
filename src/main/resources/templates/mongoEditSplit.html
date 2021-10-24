@@ -28,6 +28,7 @@
 					<div class="d-flex flex-column align-items-center px-3 py-3">
 						<h5 th:text="|File: ${filename}|" />
 						<h5 th:text="|Number Of Pages: ${numPages}|" />
+						<h5 th:text="${id}" id="entryId" style="display: none">
 					</div>
 				</fieldset>
 			</div>
@@ -59,10 +60,11 @@
 
 $(document).ready(function() {
 	var splitFileRestUrl = "/pdf-web-app/api/rest/splitFileMongo";
-	var pdfId = [[ ${id} ]];
+	var $pdfId = $("#entryId").text();
 	var $errorMsg = $("#errorMsg");
 	var $splitBtn = $("#splitBtn");
 	var $splitIndex = $("#splitIndex");
+	var numPages = [[ ${numPages} ]];
 	function showErrorMessage() {
 		$errorMsg.css({"display": ""});
 	};
@@ -91,7 +93,7 @@ $(document).ready(function() {
 
 	function ajaxRequest() {
 		var data = {
-				id: pdfId,
+				id: $pdfId,
 				splitIndex: $splitIndex.val(),
 		}
 
@@ -100,7 +102,7 @@ $(document).ready(function() {
 			url: splitFileRestUrl,
 			dataType: "json",
 			contentType: "application/json",
-			data: JSON.stringify(id),
+			data: JSON.stringify(data),
 			success: function(res) {
 			evaluateResponse(res);
 			},
@@ -110,8 +112,8 @@ $(document).ready(function() {
 		});
 	};
 	
-	function validateInput(id) {
-		if(id && id > 0)
+	function validateInput(splitIndex) {
+		if(splitIndex && splitIndex > 0 && splitIndex < numPages)
 			return true;
 		else
 			return false;
