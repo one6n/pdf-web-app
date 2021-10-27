@@ -140,7 +140,7 @@ public class BaseMongoService {
 		return bucket.uploadFromStream(filename, is);
 	}
 
-	public void deleteFileById(String bucketName, ObjectId id) {
+	public void deleteFileFromBucketById(String bucketName, ObjectId id) {
 		GridFSBucket bucket = findOrCreateBucket(bucketName);
 		bucket.delete(id);
 	}

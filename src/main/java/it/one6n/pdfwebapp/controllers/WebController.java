@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +36,7 @@ public class WebController {
 	public static final String EDIT_SPLIT_PATH = "/editSplit";
 	public static final String MONGO_EDIT_SPLIT_PATH = "/mongoEditSplit";
 	public static final String DOWNLOAD_SPLITTED_PATH = "/downloadSplitted";
+	public static final String MONGO_DOWNLOAD_SPLITTED_PATH = "/mongoDownloadSplitted";
 
 	public final static String HOME_PAGE = "home";
 	public static final String SPLIT_PAGE = "split";
@@ -42,6 +44,7 @@ public class WebController {
 	public static final String EDIT_SPLIT_PAGE = "editSplit";
 	public static final String MONGO_EDIT_SPLIT_PAGE = "mongoEditSplit";
 	private static final String DOWNLOAD_SPLITTED_PAGE = "downloadSplitted";
+	public static final String MONGO_DOWNLOAD_SPLITTED_PAGE = "mongoDownloadSplitted";
 
 	@Value("${spring.application.name}")
 	private String title;
@@ -95,7 +98,6 @@ public class WebController {
 		model.addObject("id", entry.getId());
 		model.addObject("filename", entry.getFilename());
 		model.addObject("numPages", entry.getNumberOfPages());
-		log.debug("model={}", model);
 		return model;
 	}
 
@@ -118,5 +120,28 @@ public class WebController {
 		model.addAttribute("title", title);
 		model.addAttribute("documents", documents);
 		return DOWNLOAD_SPLITTED_PAGE;
+	}
+
+	@GetMapping(MONGO_DOWNLOAD_SPLITTED_PATH)
+	public String getMongoDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
+		log.debug("Enter DownloadSplittedPage");
+		log.debug("params={}", params == null ? null : params);
+		List<PdfMongoEntry> documents = new ArrayList<>();
+		try {
+			for (Entry<String, String> param : params.entrySet()) {
+				if (StringUtils.startsWithIgnoreCase(param.getKey(), "id")) {
+					PdfMongoEntry entry = getPdfMongoService().findPdfEntryById(param.getValue());
+					if (entry != null)
+						documents.add(entry);
+					else
+						throw new RuntimeException("No pdf found with id: " + param.getValue());
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		model.addAttribute("title", title);
+		model.addAttribute("documents", documents);
+		return MONGO_DOWNLOAD_SPLITTED_PAGE;
 	}
 }

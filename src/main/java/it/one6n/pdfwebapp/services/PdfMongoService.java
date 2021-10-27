@@ -109,7 +109,7 @@ public class PdfMongoService extends BaseMongoService {
 	}
 
 	public void deletePdfEntryAndFile(String entryId, ObjectId gridFsId, Date insertDate) {
-		delete(gridFsId, buildPdfFileBucketName(insertDate));
+		deleteFileFromBucketById(buildPdfFileBucketName(insertDate), gridFsId);
 		getPdfMongoEntryRepo().deleteById(entryId);
 	}
 

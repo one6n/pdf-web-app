@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RestWebController {
 
 	public static final String DOWNLOAD_PDF_PATH = "/downloadPdf/{id}";
+	public static final String MONGO_DOWNLOAD_PDF_PATH = "/mongoDownloadPdf/{id}";
 
 	public static final String SPLIT_FILE_PATH = "/splitFile";
 	public static final String SPLIT_FILE_MONGO_PATH = "/splitFileMongo";
@@ -123,6 +124,25 @@ public class RestWebController {
 					throw new RuntimeException("Not found document with id: " + id);
 				barr = getPdfService().deserialize(pdf.getData());
 				response.setHeader("Content-Disposition", "attachment; filename=" + pdf.getFilename());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return barr;
+	}
+
+	@GetMapping(path = MONGO_DOWNLOAD_PDF_PATH, produces = "application/pdf")
+	public @ResponseBody byte[] mongoDownloadPdf(@PathVariable String id, HttpServletResponse response) {
+		log.debug("id={}", id == null ? null : id);
+		byte[] barr = null;
+		if (id != null) {
+			try {
+				PdfMongoEntry entry = getPdfMongoService().findPdfEntryById(id);
+				if (entry == null)
+					throw new RuntimeException("Not found document with id: " + id);
+				InputStream pdf = getPdfMongoService().findPdfFile(entry.getGridFsId(), entry.getInsertDate());
+				barr = IOUtils.toByteArray(pdf);
+				response.setHeader("Content-Disposition", "attachment; filename=" + entry.getFilename());
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

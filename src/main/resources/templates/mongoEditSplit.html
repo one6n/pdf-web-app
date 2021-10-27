@@ -71,7 +71,7 @@ $(document).ready(function() {
 	
 	function changeLocation(ids) {
 		console.log(ids);
-		const url = new URL('http://localhost:8080/pdf-web-app/downloadSplitted');
+		const url = new URL('http://localhost:8080/pdf-web-app/mongoDownloadSplitted');
 		var count = 0;
 		ids.map(id => {
 			++count;
