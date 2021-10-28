@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
@@ -131,22 +135,27 @@ public class RestWebController {
 		return barr;
 	}
 
-	@GetMapping(path = MONGO_DOWNLOAD_PDF_PATH, produces = "application/pdf")
-	public @ResponseBody byte[] mongoDownloadPdf(@PathVariable String id, HttpServletResponse response) {
+	@GetMapping(path = MONGO_DOWNLOAD_PDF_PATH)
+	public ResponseEntity<StreamingResponseBody> mongoDownloadPdf(@PathVariable String id,
+			HttpServletResponse response) {
 		log.debug("id={}", id == null ? null : id);
-		byte[] barr = null;
-		if (id != null) {
-			try {
-				PdfMongoEntry entry = getPdfMongoService().findPdfEntryById(id);
-				if (entry == null)
-					throw new RuntimeException("Not found document with id: " + id);
-				InputStream pdf = getPdfMongoService().findPdfFile(entry.getGridFsId(), entry.getInsertDate());
-				barr = IOUtils.toByteArray(pdf);
-				response.setHeader("Content-Disposition", "attachment; filename=" + entry.getFilename());
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+		try {
+			PdfMongoEntry entry = getPdfMongoService().findPdfEntryById(id);
+			if (entry == null)
+				throw new RuntimeException("Not found document with id: " + id);
+
+			StreamingResponseBody stream = out -> {
+				try (InputStream pdf = getPdfMongoService().findPdfFile(entry.getGridFsId(), entry.getInsertDate())) {
+					long bytesRead = IOUtils.copyLarge(pdf, out);
+					log.debug("bytesRead={}", bytesRead);
+				}
+			};
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Content-Type", "application/pdf");
+			headers.add("Content-Disposition", "attachment; filename=" + entry.getFilename());
+			return new ResponseEntity<StreamingResponseBody>(stream, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		return barr;
 	}
 }
