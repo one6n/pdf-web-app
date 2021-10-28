@@ -45,7 +45,6 @@ public class PdfMongoService extends BaseMongoService {
 		return sb.toString();
 	}
 
-	// Need to be modified
 	public PdfMongoEntry savePdfMongoEntryAndFileFromMultipartFile(MultipartFile inputFile) {
 		try {
 			ObjectId gridFsId = storeFileFromInputStream(buildPdfFileBucketName(new Date()),
@@ -115,5 +114,11 @@ public class PdfMongoService extends BaseMongoService {
 
 	public PdfMongoEntry savePdfMongoEntry(PdfMongoEntry entry) {
 		return getPdfMongoEntryRepo().save(entry);
+	}
+
+	public List<PdfMongoEntry> findAllOrderByInsertDateDesc() {
+		// getPdfMongoEntryRepo().findAllByOrderByInsertDateDesc();
+		getPdfMongoEntryRepo().findAll();
+		return null;
 	}
 }
