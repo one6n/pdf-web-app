@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
@@ -23,7 +22,7 @@ public class ScheduledTasks {
 	@Value("${jobs.removeoldpdf.maxage}")
 	private long maxAge;
 
-	@Scheduled(cron = "${jobs.removeoldpdf.cron}")
+	// @Scheduled(cron = "${jobs.removeoldpdf.cron}")
 	public void removeOldPdf() {
 		log.info("job REMOVE OLD PDF start");
 

@@ -113,6 +113,15 @@ public class PdfService {
 		return splittedPdf;
 	}
 
+	public byte[] deserialize(Blob data) throws SQLException {
+		byte[] barr = null;
+		if (data.length() > 0) {
+			barr = data.getBytes(1, (int) data.length());
+		}
+		return barr;
+	}
+
+	// Pdfbox utility methods
 	public int getNumberOfPages(byte[] barr) throws IOException {
 		int numberOfPages = 0;
 		try (PDDocument doc = PDDocument.load(barr)) {
@@ -123,14 +132,6 @@ public class PdfService {
 
 	public int getNumberOfPages(PDDocument document) throws IOException {
 		return document.getNumberOfPages();
-	}
-
-	public byte[] deserialize(Blob data) throws SQLException {
-		byte[] barr = null;
-		if (data.length() > 0) {
-			barr = data.getBytes(1, (int) data.length());
-		}
-		return barr;
 	}
 
 	public List<PDDocument> splitDocument(PDDocument document, int index) throws IOException {
