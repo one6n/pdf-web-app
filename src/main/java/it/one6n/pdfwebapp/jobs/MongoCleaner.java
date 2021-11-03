@@ -36,10 +36,10 @@ public class MongoCleaner {
 		log.debug("oldEntries= {}", oldEntries != null ? oldEntries : null);
 		if (oldEntries != null && oldEntries.size() > 0)
 			for (PdfMongoEntry entry : oldEntries)
-				if (System.currentTimeMillis() - entry.getInsertDate().getTime() > maxAge) {
+				if (System.currentTimeMillis() - entry.getInsertDate().getTime() > getMaxAge()) {
 					getPdfMongoService().deletePdfEntryAndFile(entry.getId(), entry.getGridFsId(),
 							entry.getInsertDate());
-					log.debug("deleting pdf={}, insertDate={}", entry.getFilename(), entry.getInsertDate());
+					log.debug("deleted pdf={}, insertDate={}", entry.getFilename(), entry.getInsertDate());
 				}
 		log.info("job REMOVE OLD PDF from MONGO end");
 	}

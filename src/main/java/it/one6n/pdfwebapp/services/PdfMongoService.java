@@ -117,8 +117,6 @@ public class PdfMongoService extends BaseMongoService {
 	}
 
 	public List<PdfMongoEntry> findAllOrderByInsertDateDesc() {
-		// getPdfMongoEntryRepo().findAllByOrderByInsertDateDesc();
-		getPdfMongoEntryRepo().findAll();
-		return null;
+		return getPdfMongoEntryRepo().findAllByOrderByInsertDateDesc();
 	}
 }
