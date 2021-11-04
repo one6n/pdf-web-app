@@ -18,8 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
+import it.one6n.pdfwebapp.services.PdfEntryService;
 import it.one6n.pdfwebapp.services.PdfMongoService;
-import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class WebController {
 	private String title;
 
 	@Autowired
-	private PdfService pdfService;
+	private PdfEntryService pdfEntryService;
 	@Autowired
 	private PdfMongoService pdfMongoService;
 
@@ -68,23 +68,44 @@ public class WebController {
 		return SPLIT_PAGE;
 	}
 
-	@GetMapping(MONGO_SPLIT_PATH)
-	public String getSplitMongoPage(Model model) {
-		log.debug("Enter SplitPage");
-		model.addAttribute("title", title);
-		return MONGO_SPLIT_PAGE;
-	}
-
 	@PostMapping(EDIT_SPLIT_PATH)
 	public String getEditSplitPage(@RequestParam("file") MultipartFile inputFile, Model model) {
 		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
-		PdfEntry pdf = getPdfService().savePdf(inputFile);
+		PdfEntry pdf = getPdfEntryService().savePdf(inputFile);
 		log.debug("Saved: id={}, filename={}", pdf.getId(), pdf.getFilename());
 		model.addAttribute("title", title);
 		model.addAttribute("id", pdf.getId());
 		model.addAttribute("filename", pdf.getFilename());
 		model.addAttribute("numPages", pdf.getNumberOfPages());
 		return EDIT_SPLIT_PAGE;
+	}
+
+	@GetMapping(DOWNLOAD_SPLITTED_PATH)
+	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
+		log.debug("Enter DownloadSplittedPage");
+		log.debug("params={}", params == null ? null : params);
+		List<PdfEntry> documents = new ArrayList<>();
+		try {
+			for (Entry<String, String> param : params.entrySet()) {
+				PdfEntry pdf = getPdfEntryService().findPdfById(Long.parseLong(param.getValue()));
+				if (pdf != null)
+					documents.add(pdf);
+				else
+					throw new Exception("No pdf found with id: " + param.getValue());
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		model.addAttribute("title", title);
+		model.addAttribute("documents", documents);
+		return DOWNLOAD_SPLITTED_PAGE;
+	}
+
+	@GetMapping(MONGO_SPLIT_PATH)
+	public String getSplitMongoPage(Model model) {
+		log.debug("Enter SplitPage");
+		model.addAttribute("title", title);
+		return MONGO_SPLIT_PAGE;
 	}
 
 	@PostMapping(MONGO_EDIT_SPLIT_PATH)
@@ -99,27 +120,6 @@ public class WebController {
 		model.addObject("filename", entry.getFilename());
 		model.addObject("numPages", entry.getNumberOfPages());
 		return model;
-	}
-
-	@GetMapping(DOWNLOAD_SPLITTED_PATH)
-	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
-		log.debug("Enter DownloadSplittedPage");
-		log.debug("params={}", params == null ? null : params);
-		List<PdfEntry> documents = new ArrayList<>();
-		try {
-			for (Entry<String, String> param : params.entrySet()) {
-				PdfEntry pdf = getPdfService().findPdfById(Long.parseLong(param.getValue()));
-				if (pdf != null)
-					documents.add(pdf);
-				else
-					throw new Exception("No pdf found with id: " + param.getValue());
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		model.addAttribute("title", title);
-		model.addAttribute("documents", documents);
-		return DOWNLOAD_SPLITTED_PAGE;
 	}
 
 	@GetMapping(MONGO_DOWNLOAD_SPLITTED_PATH)

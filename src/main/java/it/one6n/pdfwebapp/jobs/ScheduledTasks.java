@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import it.one6n.pdfwebapp.models.PdfEntry;
-import it.one6n.pdfwebapp.services.PdfService;
+import it.one6n.pdfwebapp.services.PdfEntryService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ScheduledTasks {
 
 	@Autowired
-	private PdfService pdfService;
+	private PdfEntryService pdfEntryService;
 
 	@Value("${jobs.removeoldpdf.maxage}")
 	private long maxAge;
@@ -26,10 +26,10 @@ public class ScheduledTasks {
 	public void removeOldPdf() {
 		log.info("job REMOVE OLD PDF start");
 
-		List<PdfEntry> oldEntries = getPdfService().findAllOrderByDateDesc();
+		List<PdfEntry> oldEntries = getPdfEntryService().findAllOrderByDateDesc();
 		for (PdfEntry entry : oldEntries)
 			if (System.currentTimeMillis() - entry.getInsertDate().getTime() > maxAge) {
-				getPdfService().deletePdfById(entry.getId());
+				getPdfEntryService().deletePdfById(entry.getId());
 				log.debug("deleting pdf={}, insertDate={}", entry.getFilename(), entry.getInsertDate());
 			}
 
