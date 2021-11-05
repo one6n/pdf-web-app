@@ -35,7 +35,7 @@
 					      <td id="name" th:text="${doc.filename}"></td>
 					      <td id="role" th:text="${doc.insertDate}"></td>
 					      <td id="pages" th:text="${doc.numberOfPages}"></td>
-					      <td><a th:id="${doc.id}" class="bi bi-cloud-download-fill text-primary" th:href="@{/api/rest/mongoDownloadPdf/}+${doc.id}"></a></td>
+					      <td><a th:id="${doc.id}" class="bi bi-cloud-download-fill text-primary" th:href="@{/api/rest/downloadPdf/}+${doc.id}"></a></td>
 					    </tr>
 						</tbody>
 					</table>

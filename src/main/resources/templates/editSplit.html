@@ -59,7 +59,7 @@
 <script>
 
 $(document).ready(function() {
-	var splitFileRestUrl = "/pdf-web-app/api/rest/splitFileMongo";
+	var splitFileRestUrl = "/pdf-web-app/api/rest/splitFile";
 	var $pdfId = $("#entryId").text();
 	var $errorMsg = $("#errorMsg");
 	var $splitBtn = $("#splitBtn");
@@ -71,7 +71,7 @@ $(document).ready(function() {
 	
 	function changeLocation(ids) {
 		console.log(ids);
-		const url = new URL('http://localhost:8080/pdf-web-app/mongoDownloadSplitted');
+		const url = new URL('http://localhost:8080/pdf-web-app/downloadSplitted');
 		var count = 0;
 		ids.map(id => {
 			++count;

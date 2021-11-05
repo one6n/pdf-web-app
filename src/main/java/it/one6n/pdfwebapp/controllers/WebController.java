@@ -30,19 +30,13 @@ public class WebController {
 
 	public static final String HOME_PATH = "/";
 	public static final String SPLIT_PATH = "/split";
-	public static final String MONGO_SPLIT_PATH = "/mongoSplit";
 	public static final String EDIT_SPLIT_PATH = "/editSplit";
-	public static final String MONGO_EDIT_SPLIT_PATH = "/mongoEditSplit";
 	public static final String DOWNLOAD_SPLITTED_PATH = "/downloadSplitted";
-	public static final String MONGO_DOWNLOAD_SPLITTED_PATH = "/mongoDownloadSplitted";
 
 	public final static String HOME_PAGE = "home";
 	public static final String SPLIT_PAGE = "split";
-	public static final String MONGO_SPLIT_PAGE = "mongoSplit";
 	public static final String EDIT_SPLIT_PAGE = "editSplit";
-	public static final String MONGO_EDIT_SPLIT_PAGE = "mongoEditSplit";
 	private static final String DOWNLOAD_SPLITTED_PAGE = "downloadSplitted";
-	public static final String MONGO_DOWNLOAD_SPLITTED_PAGE = "mongoDownloadSplitted";
 
 	@Value("${spring.application.name}")
 	private String title;
@@ -64,17 +58,10 @@ public class WebController {
 		return SPLIT_PAGE;
 	}
 
-	@GetMapping(MONGO_SPLIT_PATH)
-	public String getSplitMongoPage(Model model) {
-		log.debug("Enter SplitPage");
-		model.addAttribute("title", title);
-		return MONGO_SPLIT_PAGE;
-	}
-
-	@PostMapping(MONGO_EDIT_SPLIT_PATH)
-	public ModelAndView getMongoEditSplitPage(@RequestParam("file") MultipartFile inputFile) {
+	@PostMapping(EDIT_SPLIT_PATH)
+	public ModelAndView getEditSplitPage(@RequestParam("file") MultipartFile inputFile) {
 		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
-		ModelAndView model = new ModelAndView(MONGO_EDIT_SPLIT_PAGE);
+		ModelAndView model = new ModelAndView(EDIT_SPLIT_PAGE);
 		PdfMongoEntry entry = getPdfMongoService().savePdfMongoEntryAndFileFromMultipartFile(inputFile);
 		log.debug("Saved: entryId={}, gridFsId={}, filename={}", entry.getId(), entry.getGridFsId(),
 				entry.getFilename());
@@ -85,8 +72,8 @@ public class WebController {
 		return model;
 	}
 
-	@GetMapping(MONGO_DOWNLOAD_SPLITTED_PATH)
-	public String getMongoDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
+	@GetMapping(DOWNLOAD_SPLITTED_PATH)
+	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
 		log.debug("Enter DownloadSplittedPage");
 		log.debug("params={}", params == null ? null : params);
 		List<PdfMongoEntry> documents = new ArrayList<>();
@@ -105,6 +92,6 @@ public class WebController {
 		}
 		model.addAttribute("title", title);
 		model.addAttribute("documents", documents);
-		return MONGO_DOWNLOAD_SPLITTED_PAGE;
+		return DOWNLOAD_SPLITTED_PAGE;
 	}
 }

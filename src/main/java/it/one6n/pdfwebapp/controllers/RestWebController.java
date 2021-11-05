@@ -33,16 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 public class RestWebController {
 
 	public static final String DOWNLOAD_PDF_PATH = "/downloadPdf/{id}";
-	public static final String MONGO_DOWNLOAD_PDF_PATH = "/mongoDownloadPdf/{id}";
-
 	public static final String SPLIT_FILE_PATH = "/splitFile";
-	public static final String SPLIT_FILE_MONGO_PATH = "/splitFileMongo";
 
 	@Autowired
 	private PdfMongoService pdfMongoService;
 
-	@PostMapping(path = SPLIT_FILE_MONGO_PATH, produces = "application/json")
-	public RestResult splitFileMongo(@RequestBody Map<String, String> input) {
+	@PostMapping(path = SPLIT_FILE_PATH, produces = "application/json")
+	public RestResult splitFile(@RequestBody Map<String, String> input) {
 		log.debug("input={}", input);
 		RestResult result = new RestResult(false);
 		if (input != null) {
@@ -79,9 +76,8 @@ public class RestWebController {
 		return result;
 	}
 
-	@GetMapping(path = MONGO_DOWNLOAD_PDF_PATH)
-	public ResponseEntity<StreamingResponseBody> mongoDownloadPdf(@PathVariable String id,
-			HttpServletResponse response) {
+	@GetMapping(path = DOWNLOAD_PDF_PATH)
+	public ResponseEntity<StreamingResponseBody> downloadPdf(@PathVariable String id, HttpServletResponse response) {
 		log.debug("id={}", id == null ? null : id);
 		try {
 			PdfMongoEntry entry = getPdfMongoService().findPdfEntryById(id);
