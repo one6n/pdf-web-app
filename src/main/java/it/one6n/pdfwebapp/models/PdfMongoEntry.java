@@ -2,9 +2,8 @@ package it.one6n.pdfwebapp.models;
 
 import java.util.Date;
 
-import javax.persistence.Id;
-
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Getter;
