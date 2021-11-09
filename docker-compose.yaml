@@ -1,0 +1,17 @@
+services:
+  webapp:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@mongodb:27017/pdfApp
+  mongodb:
+    image: mongo
+    restart: always
+    volumes:
+      - C:/fileserver/data/pdf-web-app/db:/var/lib/mysql
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=2v4NdRGvGDZbfrkE
+    expose:
+      - 27017
