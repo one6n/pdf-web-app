@@ -5,6 +5,10 @@ services:
       - 8080:8080
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@mongodb:27017/pdfApp
+      - JOBS_REMOVEOLDCOLLECTION_CRON=0 1 0 * * ?
+      - JOBS_REMOVEOLDPDF_MAXAGE=300000
+      - JOBS_REMOVEOLDPDF_CRON=0 */5 * * * *
+      - LOGGING_LEVEL_IT_ONE6N=info
   mongodb:
     image: mongo
     restart: always

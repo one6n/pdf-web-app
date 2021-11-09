@@ -40,7 +40,7 @@ public class RestWebController {
 
 	@PostMapping(path = SPLIT_FILE_PATH, produces = "application/json")
 	public RestResult splitFile(@RequestBody Map<String, String> input) {
-		log.debug("input={}", input);
+		log.info("input={}", input);
 		RestResult result = new RestResult(false);
 		if (input != null) {
 			try {
@@ -78,7 +78,7 @@ public class RestWebController {
 
 	@GetMapping(path = DOWNLOAD_PDF_PATH)
 	public ResponseEntity<StreamingResponseBody> downloadPdf(@PathVariable String id, HttpServletResponse response) {
-		log.debug("id={}", id == null ? null : id);
+		log.info("id={}", id == null ? null : id);
 		try {
 			PdfMongoEntry entry = getPdfMongoService().findPdfEntryById(id);
 			if (entry == null)

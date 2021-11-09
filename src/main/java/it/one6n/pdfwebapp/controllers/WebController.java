@@ -60,7 +60,7 @@ public class WebController {
 
 	@PostMapping(EDIT_SPLIT_PATH)
 	public ModelAndView getEditSplitPage(@RequestParam("file") MultipartFile inputFile) {
-		log.debug("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
+		log.info("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
 		ModelAndView model = new ModelAndView(EDIT_SPLIT_PAGE);
 		PdfMongoEntry entry = getPdfMongoService().savePdfMongoEntryAndFileFromMultipartFile(inputFile);
 		log.debug("Saved: entryId={}, gridFsId={}, filename={}", entry.getId(), entry.getGridFsId(),
@@ -75,7 +75,7 @@ public class WebController {
 	@GetMapping(DOWNLOAD_SPLITTED_PATH)
 	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
 		log.debug("Enter DownloadSplittedPage");
-		log.debug("params={}", params == null ? null : params);
+		log.info("params={}", params == null ? null : params);
 		List<PdfMongoEntry> documents = new ArrayList<>();
 		try {
 			for (Entry<String, String> param : params.entrySet()) {
