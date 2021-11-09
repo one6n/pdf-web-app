@@ -9,9 +9,11 @@ services:
     image: mongo
     restart: always
     volumes:
-      - C:/fileserver/data/pdf-web-app/db:/var/lib/mysql
+      - db-data:/var/lib/mysql
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongoadmin
       - MONGO_INITDB_ROOT_PASSWORD=2v4NdRGvGDZbfrkE
     expose:
       - 27017
+volumes:
+  db-data:
