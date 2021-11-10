@@ -79,6 +79,11 @@
 		    <artifactId>springdoc-openapi-ui</artifactId>
 		    <version>1.5.12</version>
 		</dependency>
+		<dependency>
+			<groupId>it.one6n</groupId>
+			  <artifactId>pdf-utils</artifactId>
+			  <version>1.0.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
