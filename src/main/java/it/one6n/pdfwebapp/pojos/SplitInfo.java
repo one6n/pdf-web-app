@@ -8,15 +8,10 @@ import lombok.ToString;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class RestResult {
-
-	private boolean result;
-	private Object data;
-
-	public RestResult(boolean result) {
-		this(result, null);
-	}
+public class SplitInfo {
+	String id;
+	int splitIndex;
 }

@@ -3,7 +3,6 @@ package it.one6n.pdfwebapp.controllers;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
 import it.one6n.pdfwebapp.pojos.RestResult;
+import it.one6n.pdfwebapp.pojos.SplitInfo;
 import it.one6n.pdfwebapp.services.PdfMongoService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,13 +39,13 @@ public class RestWebController {
 	private PdfMongoService pdfMongoService;
 
 	@PostMapping(path = SPLIT_FILE_PATH, produces = "application/json")
-	public RestResult splitFile(@RequestBody Map<String, String> input) {
-		log.info("input={}", input);
+	public RestResult splitFile(@RequestBody SplitInfo splitInfo) {
+		log.info("splitInfo={}", splitInfo == null ? null : splitInfo);
 		RestResult result = new RestResult(false);
-		if (input != null) {
+		if (splitInfo != null) {
 			try {
-				String id = input.get("id");
-				int splitIndex = Integer.parseInt(input.get("splitIndex"));
+				String id = splitInfo.getId();
+				int splitIndex = splitInfo.getSplitIndex();
 				PdfMongoEntry originalPdfEntry = getPdfMongoService().findPdfEntryById(id);
 				if (originalPdfEntry != null)
 					if (originalPdfEntry.getNumberOfPages() > splitIndex) {
