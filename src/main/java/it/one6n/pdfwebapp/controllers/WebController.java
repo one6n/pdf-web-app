@@ -30,13 +30,15 @@ public class WebController {
 
 	public static final String HOME_PATH = "/";
 	public static final String SPLIT_PATH = "/split";
+	public static final String MERGE_PATH = "/merge";
 	public static final String EDIT_SPLIT_PATH = "/editSplit";
-	public static final String DOWNLOAD_SPLITTED_PATH = "/downloadSplitted";
+	public static final String DOWNLOAD_DOCUMENTS_PATH = "/downloadDocuments";
 
 	public final static String HOME_PAGE = "home";
 	public static final String SPLIT_PAGE = "split";
+	public static final String MERGE_PAGE = "merge";
 	public static final String EDIT_SPLIT_PAGE = "editSplit";
-	private static final String DOWNLOAD_SPLITTED_PAGE = "downloadSplitted";
+	private static final String DOWNLOAD_DOCUMENTS_PAGE = "downloadDocuments";
 
 	@Value("${spring.application.name}")
 	private String title;
@@ -59,6 +61,13 @@ public class WebController {
 		return SPLIT_PAGE;
 	}
 
+	@GetMapping(MERGE_PATH)
+	public String getMergePage(Model model) {
+		log.debug("Enter MergePage");
+		model.addAttribute("title", title);
+		return MERGE_PAGE;
+	}
+
 	@PostMapping(EDIT_SPLIT_PATH)
 	public ModelAndView getEditSplitPage(@RequestParam("file") MultipartFile inputFile) {
 		log.info("pdf={}, size={}", inputFile.getOriginalFilename(), inputFile.getSize());
@@ -73,9 +82,9 @@ public class WebController {
 		return model;
 	}
 
-	@GetMapping(DOWNLOAD_SPLITTED_PATH)
+	@GetMapping(DOWNLOAD_DOCUMENTS_PATH)
 	public String getDownloadSplittedPage(Model model, @RequestParam Map<String, String> params) {
-		log.debug("Enter DownloadSplittedPage");
+		log.debug("Enter DownloadDocumentsPage");
 		log.info("params={}", params == null ? null : params);
 		List<PdfMongoEntry> documents = new ArrayList<>();
 		try {
@@ -93,6 +102,6 @@ public class WebController {
 		}
 		model.addAttribute("title", title);
 		model.addAttribute("documents", documents);
-		return DOWNLOAD_SPLITTED_PAGE;
+		return DOWNLOAD_DOCUMENTS_PAGE;
 	}
 }

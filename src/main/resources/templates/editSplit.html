@@ -38,7 +38,7 @@
 						<div class="d-flex flex-column justify-content-center px-3 py-3">
 							<div class="mb-2">
 								<input type="text" class="form-control" id="splitIndex" placeholder="Insert page of splitting">
-								<small id="idEmployeelHelp" class="form-text text-muted">The page of splitting must be smaller or equals to pdf length</small>
+								<small id="splitIndexHelp" class="form-text text-muted">The page of splitting must be smaller or equals to pdf length</small>
 							</div>
 							<button id="splitBtn" class="btn btn-outline-primary">Split</button>
 						</div>
@@ -65,13 +65,14 @@ $(document).ready(function() {
 	var $splitBtn = $("#splitBtn");
 	var $splitIndex = $("#splitIndex");
 	var numPages = [[ ${numPages} ]];
+	
 	function showErrorMessage() {
 		$errorMsg.css({"display": ""});
 	};
 	
 	function changeLocation(ids) {
 		console.log(ids);
-		const url = new URL('http://localhost:8080/pdf-web-app/downloadSplitted');
+		const url = new URL('http://localhost:8080/pdf-web-app/downloadDocuments');
 		var count = 0;
 		ids.map(id => {
 			++count;

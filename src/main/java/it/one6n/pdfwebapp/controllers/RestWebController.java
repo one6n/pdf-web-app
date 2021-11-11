@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import it.one6n.pdfwebapp.models.PdfMongoEntry;
@@ -29,11 +31,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 @RestController
-@RequestMapping("/api/rest")
+@RequestMapping(RestWebController.REST_API_BASE_PATH)
 public class RestWebController {
 
-	public static final String DOWNLOAD_PDF_PATH = "/downloadPdf/{id}";
+	public static final String REST_API_BASE_PATH = "/api/rest";
+
 	public static final String SPLIT_FILE_PATH = "/splitFile";
+	public static final String UPLOAD_FILE_PATH = "/uploadFile";
+	public static final String DOWNLOAD_PDF_PATH = "/downloadPdf/{id}";
 
 	@Autowired
 	private PdfMongoService pdfMongoService;
@@ -74,6 +79,13 @@ public class RestWebController {
 				result.setResult(true);
 		}
 		return result;
+	}
+
+	@PostMapping(path = UPLOAD_FILE_PATH, produces = "application/json")
+	public RestResult uploadFile(@RequestParam("file") MultipartFile inputFile) {
+		log.info("inputFile size={}", inputFile == null ? null : inputFile.getSize());
+
+		return new RestResult(true);
 	}
 
 	@GetMapping(path = DOWNLOAD_PDF_PATH)

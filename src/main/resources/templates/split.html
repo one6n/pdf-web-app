@@ -15,7 +15,10 @@
 	
 	<div class="container mt-5">
 		<div class="row justify-content-center">
-			<div th:replace="fragments.html :: uploadFileForm" />
+			<fieldset  class="px-3 py-3">
+				<legend class="font-italic">Upload file:</legend>
+					<div th:replace="fragments.html :: uploadFileForm" />
+			</fieldset>
 		</div>
 		<div class="row justify-content-center mt-5">
 			<a th:href="@{/}" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>

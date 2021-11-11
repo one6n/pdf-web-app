@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script th:replace="fragments.html :: jquery_cdn"></script>
+<link th:replace="fragments.html :: bootstrap_css"/>
+<link th:replace="fragments.html :: bootstrap_icons"/>
+<title th:text="${title}"></title>
+<style th:replace="fragments.html :: fieldset_style"/>
+</head>
+<body>
+
+	<nav th:replace="fragments.html :: navbar" />
+	
+	<div class="container mt-5">
+	
+		<div class="row justify-content-center">
+			<div class="col-md-12">	
+				<div id="errorMsg" class="alert alert-danger" role="alert" style="display: none;"> Something went wrong, please check the data </div>
+			</div>
+		</div>
+	
+		<div class="row justify-content-center">
+			<fieldset  class="px-3 py-3">
+				<legend class="font-italic">Upload files:</legend>
+					<div th:replace="fragments.html :: uploadFileForm" />
+					<div th:replace="fragments.html :: uploadFileForm" />
+					<div class="row justify-content-center">
+						<button id="mergeBtn" class="btn btn-outline-primary">Merge</button>
+					</div>
+			</fieldset>
+		</div>
+		<div class="row justify-content-center mt-5">
+			<a th:href="@{/}" type="button" class="btn btn-link" aria-pressed="true">Back Home Page</a>
+		</div>
+	</div>
+	
+	<div th:replace="fragments.html :: bootstrap_script"></div>
+
+<script>
+
+$(document).ready(() => {
+	const uploadFileRestUrl = '/api/rest/uploadFile';
+	const $errorMsg = $("#errorMsg");
+	const $mergeBtn = $("#mergeBtn");
+	
+	const ids = [];
+
+	const showErrorMessage = () => {
+		$errorMsg.css({"display": ""});
+	}
+	
+	const validateInput = (ids) => {
+		if(ids.length == 2)
+			return true;
+		else
+			return false;
+	};
+	
+	const evaluateResponse = (res) => {
+		const result = res.result;
+		const data = res.data;
+		if(result) {
+			changeLocation(data);
+		}
+		else {
+			showErrorMessage();
+		}
+	};
+
+	const ajaxRequest = () => {
+		var data = {
+		}
+
+		$.ajax({
+			type: "POST",  
+			url: uploadFileRestUrl,
+			dataType: "json",
+			contentType: "application/json",
+			data: JSON.stringify(data),
+			success: function(res) {
+			evaluateResponse(res);
+			},
+			error: function(response) { 
+				alert("Error: " + response.status); 
+			}       
+		});
+	};
+		
+	const changeLocation = (ids) => {
+		console.log(ids);
+		const url = new URL('http://localhost:8080/pdf-web-app/downloadDocuments');
+		let count = 0;
+		ids.map(id => {
+			++count;
+			url.searchParams.set('id' + count, id);
+		});
+		window.location = url;
+	};
+	
+	$mergeBtn.click(() => {
+		$errorMsg.css({"display": "none"});
+		if(validateInput(ids))
+			changeLocation(ids);
+		else
+			showErrorMessage();
+	});
+});
+
+</script>
+
+</body>
+</html>
