@@ -55,6 +55,7 @@ public class WebController {
 	public String getSplitPage(Model model) {
 		log.debug("Enter SplitPage");
 		model.addAttribute("title", title);
+		model.addAttribute("uploadUrl", WebController.EDIT_SPLIT_PATH);
 		return SPLIT_PAGE;
 	}
 

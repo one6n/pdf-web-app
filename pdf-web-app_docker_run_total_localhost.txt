@@ -1,9 +1,11 @@
 1) Run a mongo instance
-docker run -it --rm --name mongo-pdf-web-app -p 27017:27017 -v C:/fileserver/data/pdf-web-app/db:/data/db -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=2v4NdRGvGDZbfrkE mongo
+	docker run -it --rm --name mongo-pdf-web-app -p 27017:27017 -v C:/fileserver/data/pdf-web-app/db:/data/db -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=2v4NdRGvGDZbfrkE mongo
 2)Build the image
-docker build -t pdf-web-app . (https://docs.docker.com/engine/reference/commandline/tag/)
+	docker build -t pdf-web-app . (https://docs.docker.com/engine/reference/commandline/tag/)
 3)Run the app
-docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp pdf-web-app
-
+	If the mongo db running on localhost:
+		docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp pdf-web-app
+	else
+		docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@hostname:27017/pdfApp pdf-web-app
 Docker compose)
-docker-compose-up
+	docker-compose-up
