@@ -25,6 +25,7 @@ import it.one6n.pdfwebapp.models.PdfMongoEntry;
 import it.one6n.pdfwebapp.pojos.RestResult;
 import it.one6n.pdfwebapp.pojos.SplitInfo;
 import it.one6n.pdfwebapp.services.PdfMongoService;
+import it.one6n.pdfwebapp.services.PdfService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,15 +37,18 @@ public class RestWebController {
 
 	public static final String REST_API_BASE_PATH = "/api/rest";
 
-	public static final String SPLIT_FILE_PATH = "/splitFile";
+	public static final String SPLIT_DOCUMENT_PATH = "/splitDocument";
+	public static final String MERGE_DOCUMENTS_PATH = "/mergeDocuments";
 	public static final String UPLOAD_FILE_PATH = "/uploadFile";
 	public static final String DOWNLOAD_PDF_PATH = "/downloadPdf/{id}";
 
 	@Autowired
 	private PdfMongoService pdfMongoService;
+	@Autowired
+	private PdfService pdfService;
 
-	@PostMapping(path = SPLIT_FILE_PATH, produces = "application/json")
-	public RestResult splitFile(@RequestBody SplitInfo splitInfo) {
+	@PostMapping(path = SPLIT_DOCUMENT_PATH, produces = "application/json")
+	public RestResult splitDocument(@RequestBody SplitInfo splitInfo) {
 		log.info("splitInfo={}", splitInfo == null ? null : splitInfo);
 		RestResult result = new RestResult(false);
 		if (splitInfo != null) {
@@ -81,11 +85,21 @@ public class RestWebController {
 		return result;
 	}
 
+	@GetMapping(path = MERGE_DOCUMENTS_PATH, produces = "application/json")
+	public RestResult mergeDocumentS(@RequestParam String id1, @RequestParam String id2) {
+		log.info("id1={}, id2={}", id1, id2);
+
+		return new RestResult(true);
+	}
+
 	@PostMapping(path = UPLOAD_FILE_PATH, produces = "application/json")
 	public RestResult uploadFile(@RequestParam("file") MultipartFile inputFile) {
 		log.info("inputFile size={}", inputFile == null ? null : inputFile.getSize());
-
-		return new RestResult(true);
+		PdfMongoEntry entry = getPdfMongoService().savePdfMongoEntryAndFileFromMultipartFile(inputFile);
+		if (entry != null)
+			return new RestResult(true, entry.getId());
+		else
+			return new RestResult(false);
 	}
 
 	@GetMapping(path = DOWNLOAD_PDF_PATH)

@@ -59,7 +59,7 @@
 <script>
 
 $(document).ready(function() {
-	var splitFileRestUrl = "/pdf-web-app/api/rest/splitFile";
+	var splitDocumentRestUrl = "/pdf-web-app/api/rest/splitDocument";
 	var $pdfId = $("#entryId").text();
 	var $errorMsg = $("#errorMsg");
 	var $splitBtn = $("#splitBtn");
@@ -100,7 +100,7 @@ $(document).ready(function() {
 
 		$.ajax({
 			type: "POST",  
-			url: splitFileRestUrl,
+			url: splitDocumentRestUrl,
 			dataType: "json",
 			contentType: "application/json",
 			data: JSON.stringify(data),
@@ -138,7 +138,7 @@ $(document).ready(function() {
 				showErrorMessage();
 		}
 	});
-	
+
 });
 
 </script>

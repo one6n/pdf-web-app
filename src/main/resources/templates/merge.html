@@ -42,8 +42,9 @@
 
 $(document).ready(() => {
 	const uploadFileRestUrl = '/pdf-web-app/api/rest/uploadFile';
+	const mergeDocumentsRestUrl = '/pdf-web-app/api/rest/mergeDocuments';
 	const $errorMsg = $("#errorMsg");
-	const $uploadBtn = $("button");
+	const $uploadBtn = $("button[type|='submit']");
 	const $mergeBtn = $("#mergeBtn");
 
 	$('form').submit((event) => {
@@ -64,19 +65,19 @@ $(document).ready(() => {
 			return false;
 	};
 	
-	const evaluateResponse = (res) => {
+	const evaluateUpload = (res) => {
 		const result = res.result;
 		const data = res.data;
 		if(result) {
-			//ad id of entry in ids array
-			console.log('response result:', result);
+			ids.push(data);
+			console.log('ids:', ids);
 		}
 		else {
 			showErrorMessage();
 		}
 	};
 
-	const ajaxRequest = (file) => {
+	const ajaxUploadFileRequest = (file) => {
 		console.log(file);
 		let data = new FormData();
 		data.append('file',file);
@@ -84,12 +85,33 @@ $(document).ready(() => {
 		$.ajax({
 			type: "POST",  
 			url: uploadFileRestUrl,
-			dataType: "json",
 			contentType: false,
 			processData: false,
 			data: data,
 			success: function(res) {
-			evaluateResponse(res);
+				evaluateUpload(res);
+			},
+			error: function(response) { 
+				alert("Error: " + response.status); 
+			}       
+		});
+	};
+	
+	const ajaxMergeDocumentsRequest = () => {
+		
+		$.ajax({
+			type: "GET",  
+			url: mergeDocumentsRestUrl,
+			dataType: "json",
+			contentType: "application/json",
+			data: JSON.stringify(ids),
+			success: function(res) {
+				let restResult = res.result;
+				let data = res.data
+				if(restResult)
+					changeLocation(data);
+				else
+					showErrorMessage();
 			},
 			error: function(response) { 
 				alert("Error: " + response.status); 
@@ -110,16 +132,15 @@ $(document).ready(() => {
 	
 	$uploadBtn.click((e) => {
 		//console.log(document.getElementById("uploadFileInput").files[0]);
+		console.log('sono io a far danno');
 		$errorMsg.css({"display": "none"});
-		ajaxRequest(e.currentTarget.form[0].files[0]);
+		ajaxUploadFileRequest(e.currentTarget.form[0].files[0]);
 	});
 	
 	$mergeBtn.click(() => {
 		$errorMsg.css({"display": "none"});
 		if(validateInput(ids)) {
-			//call a rest with the two ids for start the merge.
-			//then take the rest response, the entry id of the merged document and pass it to change location
-			changeLocation(ids);
+			ajaxMergeDocumentsRequest();
 		}
 		else
 			showErrorMessage();
