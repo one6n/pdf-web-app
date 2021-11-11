@@ -41,9 +41,15 @@
 <script>
 
 $(document).ready(() => {
-	const uploadFileRestUrl = '/api/rest/uploadFile';
+	const uploadFileRestUrl = '/pdf-web-app/api/rest/uploadFile';
 	const $errorMsg = $("#errorMsg");
+	const $uploadBtn = $("button");
 	const $mergeBtn = $("#mergeBtn");
+
+	$('form').submit((event) => {
+	    event.preventDefault();
+	});
+
 	
 	const ids = [];
 
@@ -62,23 +68,26 @@ $(document).ready(() => {
 		const result = res.result;
 		const data = res.data;
 		if(result) {
-			changeLocation(data);
+			//ad id of entry in ids array
+			console.log('response result:', result);
 		}
 		else {
 			showErrorMessage();
 		}
 	};
 
-	const ajaxRequest = () => {
-		var data = {
-		}
-
+	const ajaxRequest = (file) => {
+		console.log(file);
+		let data = new FormData();
+		data.append('file',file);
+		
 		$.ajax({
 			type: "POST",  
 			url: uploadFileRestUrl,
 			dataType: "json",
-			contentType: "application/json",
-			data: JSON.stringify(data),
+			contentType: false,
+			processData: false,
+			data: data,
 			success: function(res) {
 			evaluateResponse(res);
 			},
@@ -99,10 +108,19 @@ $(document).ready(() => {
 		window.location = url;
 	};
 	
+	$uploadBtn.click((e) => {
+		//console.log(document.getElementById("uploadFileInput").files[0]);
+		$errorMsg.css({"display": "none"});
+		ajaxRequest(e.currentTarget.form[0].files[0]);
+	});
+	
 	$mergeBtn.click(() => {
 		$errorMsg.css({"display": "none"});
-		if(validateInput(ids))
+		if(validateInput(ids)) {
+			//call a rest with the two ids for start the merge.
+			//then take the rest response, the entry id of the merged document and pass it to change location
 			changeLocation(ids);
+		}
 		else
 			showErrorMessage();
 	});
