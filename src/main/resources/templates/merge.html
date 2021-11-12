@@ -24,8 +24,8 @@
 		<div class="row justify-content-center">
 			<fieldset  class="px-3 py-3">
 				<legend class="font-italic">Upload files:</legend>
-					<div th:replace="fragments.html :: uploadFileForm" id="file1"/>
-					<div th:replace="fragments.html :: uploadFileForm" id="file2" />
+					<div th:insert="fragments.html :: uploadFileForm" id="file1"/>
+					<div th:insert="fragments.html :: uploadFileForm" id="file2" />
 					<div class="row justify-content-center">
 						<button id="mergeBtn" class="btn btn-outline-primary">Merge</button>
 					</div>
@@ -66,11 +66,12 @@ $(document).ready(() => {
 			return false;
 	};
 	
-	const evaluateUpload = (res) => {
+	const evaluateUpload = (res,fileId) => {
 		const result = res.result;
 		const data = res.data;
 		if(result) {
-			ids.push(data);
+			console.log('fileId', fileId);
+			ids[fileId]=data;
 			console.log('ids:', ids);
 		}
 		else {
@@ -78,7 +79,7 @@ $(document).ready(() => {
 		}
 	};
 
-	const ajaxUploadFileRequest = (file) => {
+	const ajaxUploadFileRequest = (file, fileId) => {
 		console.log(file);
 		let data = new FormData();
 		data.append('file',file);
@@ -90,7 +91,7 @@ $(document).ready(() => {
 			processData: false,
 			data: data,
 			success: function(res) {
-				evaluateUpload(res);
+				evaluateUpload(res, fileId);
 			},
 			error: function(response) { 
 				alert("Error: " + response.status); 
@@ -133,9 +134,11 @@ $(document).ready(() => {
 	};
 	
 	$uploadBtn.click((e) => {
+		//console.log(e);
 		//console.log(document.getElementById("uploadFileInput").files[0]);
 		$errorMsg.css({"display": "none"});
-		ajaxUploadFileRequest(e.currentTarget.form[0].files[0]);
+		const fileId = e.target.form.parentElement.id.substring(4,5) - 1;
+		ajaxUploadFileRequest(e.currentTarget.form[0].files[0], fileId);
 	});
 	
 	$mergeBtn.click(() => {
