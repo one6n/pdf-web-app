@@ -17,6 +17,12 @@
 	
 		<div class="row justify-content-center">
 			<div class="col-md-12">	
+				<div id="successMsg" class="alert alert-success" role="alert" style="display: none;">Upload completed successfully </div>
+			</div>
+		</div>
+	
+		<div class="row justify-content-center">
+			<div class="col-md-12">	
 				<div id="errorMsg" class="alert alert-danger" role="alert" style="display: none;"> Something went wrong, please check the data </div>
 			</div>
 		</div>
@@ -24,7 +30,9 @@
 		<div class="row justify-content-center">
 			<fieldset  class="px-3 py-3">
 				<legend class="font-italic">Upload files:</legend>
+					<h5>First File</h5>
 					<div th:insert="fragments.html :: uploadFileForm" id="file1"/>
+					<h5>Second File</h5>
 					<div th:insert="fragments.html :: uploadFileForm" id="file2" />
 					<div class="row justify-content-center">
 						<button id="mergeBtn" class="btn btn-outline-primary">Merge</button>
@@ -43,9 +51,11 @@
 $(document).ready(() => {
 	const uploadFileRestUrl = '/pdf-web-app/api/rest/uploadFile';
 	const mergeDocumentsRestUrl = '/pdf-web-app/api/rest/mergeDocuments';
+	const $successMsg = $("#successMsg");
 	const $errorMsg = $("#errorMsg");
 	const $uploadBtn = $("button[type|='submit']");
 	const $mergeBtn = $("#mergeBtn");
+	const $btn = $("button");
 	const documentCounter = 0;
 
 	$('form').submit((event) => {
@@ -55,6 +65,10 @@ $(document).ready(() => {
 	
 	const ids = [];
 
+	const showSuccessMessage = () => {
+		$successMsg.css({"display": ""});
+	}
+	
 	const showErrorMessage = () => {
 		$errorMsg.css({"display": ""});
 	}
@@ -66,12 +80,14 @@ $(document).ready(() => {
 			return false;
 	};
 	
-	const evaluateUpload = (res,fileId) => {
+	const evaluateUpload = (res, fileId, button) => {
 		const result = res.result;
 		const data = res.data;
 		if(result) {
-			console.log('fileId', fileId);
 			ids[fileId]=data;
+			showSuccessMessage();
+			console.log('button: ',button);
+			button.disabled = true;
 			console.log('ids:', ids);
 		}
 		else {
@@ -79,7 +95,7 @@ $(document).ready(() => {
 		}
 	};
 
-	const ajaxUploadFileRequest = (file, fileId) => {
+	const ajaxUploadFileRequest = (file, fileId, button) => {
 		console.log(file);
 		let data = new FormData();
 		data.append('file',file);
@@ -91,7 +107,7 @@ $(document).ready(() => {
 			processData: false,
 			data: data,
 			success: function(res) {
-				evaluateUpload(res, fileId);
+				evaluateUpload(res, fileId, button);
 			},
 			error: function(response) { 
 				alert("Error: " + response.status); 
@@ -133,12 +149,16 @@ $(document).ready(() => {
 		window.location = url;
 	};
 	
+	$btn.click(() => {
+		$successMsg.css({"display": "none"})
+	});
+	
 	$uploadBtn.click((e) => {
 		//console.log(e);
 		//console.log(document.getElementById("uploadFileInput").files[0]);
 		$errorMsg.css({"display": "none"});
 		const fileId = e.target.form.parentElement.id.substring(4,5) - 1;
-		ajaxUploadFileRequest(e.currentTarget.form[0].files[0], fileId);
+		ajaxUploadFileRequest(e.currentTarget.form[0].files[0], fileId, e.currentTarget);
 	});
 	
 	$mergeBtn.click(() => {
