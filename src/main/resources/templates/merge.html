@@ -24,8 +24,8 @@
 		<div class="row justify-content-center">
 			<fieldset  class="px-3 py-3">
 				<legend class="font-italic">Upload files:</legend>
-					<div th:replace="fragments.html :: uploadFileForm" />
-					<div th:replace="fragments.html :: uploadFileForm" />
+					<div th:replace="fragments.html :: uploadFileForm" id="file1"/>
+					<div th:replace="fragments.html :: uploadFileForm" id="file2" />
 					<div class="row justify-content-center">
 						<button id="mergeBtn" class="btn btn-outline-primary">Merge</button>
 					</div>
@@ -46,6 +46,7 @@ $(document).ready(() => {
 	const $errorMsg = $("#errorMsg");
 	const $uploadBtn = $("button[type|='submit']");
 	const $mergeBtn = $("#mergeBtn");
+	const documentCounter = 0;
 
 	$('form').submit((event) => {
 	    event.preventDefault();
@@ -98,13 +99,17 @@ $(document).ready(() => {
 	};
 	
 	const ajaxMergeDocumentsRequest = () => {
+		const requestParams = {};
+		ids.forEach((el, index) => {
+			requestParams['id'+(index+1)]=el;
+		});
 		
 		$.ajax({
 			type: "GET",  
 			url: mergeDocumentsRestUrl,
 			dataType: "json",
 			contentType: "application/json",
-			data: JSON.stringify(ids),
+			data: requestParams,
 			success: function(res) {
 				let restResult = res.result;
 				let data = res.data
@@ -119,20 +124,16 @@ $(document).ready(() => {
 		});
 	};
 		
-	const changeLocation = (ids) => {
-		console.log(ids);
+	const changeLocation = (id) => {
+		console.log('recivedId:', id);
 		const url = new URL('http://localhost:8080/pdf-web-app/downloadDocuments');
 		let count = 0;
-		ids.map(id => {
-			++count;
-			url.searchParams.set('id' + count, id);
-		});
+		url.searchParams.set('id', id);
 		window.location = url;
 	};
 	
 	$uploadBtn.click((e) => {
 		//console.log(document.getElementById("uploadFileInput").files[0]);
-		console.log('sono io a far danno');
 		$errorMsg.css({"display": "none"});
 		ajaxUploadFileRequest(e.currentTarget.form[0].files[0]);
 	});
