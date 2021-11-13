@@ -96,7 +96,7 @@ public class PdfMongoService extends BaseMongoService {
 		if (barr != null && barr.length > 0) {
 			splittedPdf = new ArrayList<>();
 			List<PDDocument> splittedDocuments = null;
-			try (PDDocument docOriginal = PDDocument.load(barr)) {
+			try (PDDocument docOriginal = getPdfService().getDocumentFromByteArray(barr)) {
 				splittedDocuments = getPdfService().splitDocument(docOriginal, delimiter);
 				splittedPdf = buildPdfMongoEntriesAndSaveFilesFromDocuments(splittedDocuments, filename);
 			} finally {
@@ -105,6 +105,22 @@ public class PdfMongoService extends BaseMongoService {
 			}
 		}
 		return splittedPdf;
+	}
+
+	public PdfMongoEntry mergeDocuments(String id1, String id2) {
+		PdfMongoEntry mergedEntry = null;
+		PdfMongoEntry firstEntry = findPdfEntryById(id1);
+		PdfMongoEntry secondEntry = findPdfEntryById(id2);
+		try (InputStream is1 = getInputStreamById(buildPdfFileBucketName(firstEntry.getInsertDate()),
+				firstEntry.getGridFsId());
+				InputStream is2 = getInputStreamById(buildPdfFileBucketName(firstEntry.getInsertDate()),
+						secondEntry.getGridFsId());
+				PDDocument mergedDocument = getPdfService().mergeDocuments(is1, is2);) {
+			mergedEntry = buildPdfMongoEntriesAndSaveFilesFromDocuments(List.of(mergedDocument), "merged").get(0);
+		} catch (IOException e) {
+			throw new RuntimeException("Error in merge operation");
+		}
+		return mergedEntry;
 	}
 
 	public void deletePdfEntryAndFile(String entryId, ObjectId gridFsId, Date insertDate) {
