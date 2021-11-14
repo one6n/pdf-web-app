@@ -88,15 +88,19 @@ public class RestWebController {
 	@GetMapping(path = MERGE_DOCUMENTS_PATH, produces = "application/json")
 	public RestResult mergeDocuments(@RequestParam String id1, @RequestParam String id2) {
 		log.info("id1={}, id2={}", id1, id2);
+		RestResult result = new RestResult(false);
 		try {
-			PdfMongoEntry merged = getPdfMongoService().mergeDocuments(id1, id2);
-			if (merged == null)
+			PdfMongoEntry merged = getPdfMongoService().mergeDocumentsFromEntries(id1, id2);
+			if (merged != null) {
+				merged = getPdfMongoService().savePdfMongoEntry(merged);
+				result.setResult(true);
+				result.setData(merged.getId());
+			} else
 				throw new RuntimeException("Error in merge operation");
-			return new RestResult(true, merged.getId());
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		return new RestResult(false);
+		return result;
 	}
 
 	@PostMapping(path = UPLOAD_FILE_PATH, produces = "application/json")

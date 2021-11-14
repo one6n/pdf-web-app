@@ -1,11 +1,11 @@
 package it.one6n.pdfwebapp.services;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.springframework.stereotype.Service;
 
 import it.one6n.pdfutils.PdfUtils;
@@ -48,15 +48,13 @@ public class PdfService {
 		return document;
 	}
 
-	public PDDocument mergeDocuments(InputStream is1, InputStream is2) throws IOException {
-		try (PDDocument doc1 = getDocumentFromByteArray(IOUtils.toByteArray(is1));
-				PDDocument doc2 = getDocumentFromByteArray(IOUtils.toByteArray(is2));) {
-			return mergeDocuments(doc1, doc2);
+	public PDDocument mergeDocuments(PDDocument... documents) throws IOException {
+		PDDocument merged = new PDDocument();
+		for (PDDocument doc : documents) {
+			Iterator<PDPage> iterator = doc.getPages().iterator();
+			while (iterator.hasNext())
+				merged.addPage(iterator.next());
 		}
-	}
-
-	public PDDocument mergeDocuments(PDDocument doc1, PDDocument doc2) {
-		PDDocument merged = null;
 		return merged;
 	}
 }

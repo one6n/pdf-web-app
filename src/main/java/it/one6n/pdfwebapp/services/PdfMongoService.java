@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,16 +108,20 @@ public class PdfMongoService extends BaseMongoService {
 		return splittedPdf;
 	}
 
-	public PdfMongoEntry mergeDocuments(String id1, String id2) {
+	public PdfMongoEntry mergeDocumentsFromEntries(String id1, String id2) {
 		PdfMongoEntry mergedEntry = null;
 		PdfMongoEntry firstEntry = findPdfEntryById(id1);
 		PdfMongoEntry secondEntry = findPdfEntryById(id2);
+
 		try (InputStream is1 = getInputStreamById(buildPdfFileBucketName(firstEntry.getInsertDate()),
 				firstEntry.getGridFsId());
 				InputStream is2 = getInputStreamById(buildPdfFileBucketName(firstEntry.getInsertDate()),
 						secondEntry.getGridFsId());
-				PDDocument mergedDocument = getPdfService().mergeDocuments(is1, is2);) {
-			mergedEntry = buildPdfMongoEntriesAndSaveFilesFromDocuments(List.of(mergedDocument), "merged").get(0);
+				PDDocument doc1 = getPdfService().getDocumentFromByteArray(IOUtils.toByteArray(is1));
+				PDDocument doc2 = getPdfService().getDocumentFromByteArray(IOUtils.toByteArray(is2));
+				PDDocument mergedDocument = getPdfService().mergeDocuments(new PDDocument[] { doc1, doc2 });) {
+			log.debug("mergedDocument numberOfPages={}", mergedDocument.getNumberOfPages());
+			mergedEntry = buildPdfMongoEntriesAndSaveFilesFromDocuments(List.of(mergedDocument), "merged.pdf").get(0);
 		} catch (IOException e) {
 			throw new RuntimeException("Error in merge operation");
 		}
