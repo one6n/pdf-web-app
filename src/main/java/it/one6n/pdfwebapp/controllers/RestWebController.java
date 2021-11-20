@@ -98,7 +98,7 @@ public class RestWebController {
 			} else
 				throw new RuntimeException("Error in merge operation");
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
+			throw new RuntimeException(e);
 		}
 		return result;
 	}

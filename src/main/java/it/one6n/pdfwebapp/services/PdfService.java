@@ -48,7 +48,7 @@ public class PdfService {
 		return document;
 	}
 
-	public PDDocument mergeDocuments(PDDocument... documents) throws IOException {
+	public PDDocument mergeDocuments(PDDocument... documents) {
 		PDDocument merged = new PDDocument();
 		for (PDDocument doc : documents) {
 			Iterator<PDPage> iterator = doc.getPages().iterator();

@@ -122,8 +122,8 @@ public class PdfMongoService extends BaseMongoService {
 				PDDocument mergedDocument = getPdfService().mergeDocuments(new PDDocument[] { doc1, doc2 });) {
 			log.debug("mergedDocument numberOfPages={}", mergedDocument.getNumberOfPages());
 			mergedEntry = buildPdfMongoEntriesAndSaveFilesFromDocuments(List.of(mergedDocument), "merged.pdf").get(0);
-		} catch (IOException e) {
-			throw new RuntimeException("Error in merge operation");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 		return mergedEntry;
 	}
