@@ -4,7 +4,9 @@
 	docker build -t pdf-web-app . (https://docs.docker.com/engine/reference/commandline/tag/)
 3)Run the app
 	If the mongo db running on localhost:
-		docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp pdf-web-app
+		docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp?authSource=admin pdf-web-app
+			or this for custom conf
+		docker run -p:8080:8080 -e MONGODB_CONNECTION_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp?authSource=admin pdf-web-app
 	else
 		docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@hostname:27017/pdfApp pdf-web-app
 Docker compose)

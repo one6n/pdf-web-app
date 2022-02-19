@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public abstract class BaseMongoConfig {
 
-	@Value("${spring.data.mongo}")
+	@Value("${mongodb.connection.uri}")
 	private String connectionUri;
 
 	public abstract ConnectionString getConnectionString();

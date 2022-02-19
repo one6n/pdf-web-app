@@ -1,0 +1,2 @@
+REM docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp?authSource=admin pdf-web-app
+docker run -p:8080:8080 -e MONGODB_CONNECTION_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@host.docker.internal:27017/pdfApp?authSource=admin pdf-web-app
