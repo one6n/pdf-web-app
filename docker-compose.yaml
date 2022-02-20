@@ -4,7 +4,8 @@ services:
     ports:
       - 8080:8080
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@mongodb:27017/pdfApp
+      #- SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@mongodb:27017/pdfApp?authSource=admin
+      - MONGODB_CONNECTION_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@mongodb:27017/pdfApp?authSource=admin
       - JOBS_REMOVEOLDCOLLECTION_CRON=0 1 0 * * ?
       - JOBS_REMOVEOLDPDF_MAXAGE=300000
       - JOBS_REMOVEOLDPDF_CRON=0 */5 * * * *
@@ -13,7 +14,7 @@ services:
     image: mongo
     restart: always
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data:/var/lib/mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongoadmin
       - MONGO_INITDB_ROOT_PASSWORD=2v4NdRGvGDZbfrkE

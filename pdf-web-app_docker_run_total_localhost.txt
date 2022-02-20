@@ -10,4 +10,4 @@
 	else
 		docker run -p:8080:8080 -e SPRING_DATA_MONGODB_URI=mongodb://mongoadmin:2v4NdRGvGDZbfrkE@hostname:27017/pdfApp pdf-web-app
 Docker compose)
-	docker-compose-up
+	docker-compose up
